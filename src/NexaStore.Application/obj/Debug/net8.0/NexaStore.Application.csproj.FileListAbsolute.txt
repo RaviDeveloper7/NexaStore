@@ -1,0 +1,15 @@
+C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Application\bin\Debug\net8.0\NexaStore.Application.deps.json
+C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Application\bin\Debug\net8.0\NexaStore.Application.dll
+C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Application\bin\Debug\net8.0\NexaStore.Application.pdb
+C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Application\bin\Debug\net8.0\NexaStore.Domain.dll
+C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Application\bin\Debug\net8.0\NexaStore.Domain.pdb
+C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Application\obj\Debug\net8.0\NexaStore.Application.csproj.AssemblyReference.cache
+C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Application\obj\Debug\net8.0\NexaStore.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Application\obj\Debug\net8.0\NexaStore.Application.AssemblyInfoInputs.cache
+C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Application\obj\Debug\net8.0\NexaStore.Application.AssemblyInfo.cs
+C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Application\obj\Debug\net8.0\NexaStore.Application.csproj.CoreCompileInputs.cache
+C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Application\obj\Debug\net8.0\NexaStor.267A9C8C.Up2Date
+C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Application\obj\Debug\net8.0\NexaStore.Application.dll
+C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Application\obj\Debug\net8.0\refint\NexaStore.Application.dll
+C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Application\obj\Debug\net8.0\NexaStore.Application.pdb
+C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Application\obj\Debug\net8.0\ref\NexaStore.Application.dll

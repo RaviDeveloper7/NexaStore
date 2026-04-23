@@ -1,0 +1,17 @@
+C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Identity\bin\Debug\net8.0\NexaStore.Identity.deps.json
+C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Identity\bin\Debug\net8.0\NexaStore.Identity.dll
+C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Identity\bin\Debug\net8.0\NexaStore.Identity.pdb
+C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Identity\bin\Debug\net8.0\NexaStore.Application.dll
+C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Identity\bin\Debug\net8.0\NexaStore.Domain.dll
+C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Identity\bin\Debug\net8.0\NexaStore.Application.pdb
+C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Identity\bin\Debug\net8.0\NexaStore.Domain.pdb
+C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Identity\obj\Debug\net8.0\NexaStore.Identity.csproj.AssemblyReference.cache
+C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Identity\obj\Debug\net8.0\NexaStore.Identity.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Identity\obj\Debug\net8.0\NexaStore.Identity.AssemblyInfoInputs.cache
+C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Identity\obj\Debug\net8.0\NexaStore.Identity.AssemblyInfo.cs
+C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Identity\obj\Debug\net8.0\NexaStore.Identity.csproj.CoreCompileInputs.cache
+C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Identity\obj\Debug\net8.0\NexaStor.D9261033.Up2Date
+C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Identity\obj\Debug\net8.0\NexaStore.Identity.dll
+C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Identity\obj\Debug\net8.0\refint\NexaStore.Identity.dll
+C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Identity\obj\Debug\net8.0\NexaStore.Identity.pdb
+C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Identity\obj\Debug\net8.0\ref\NexaStore.Identity.dll

@@ -1,0 +1,43 @@
+<!-- 
+  Api — the composition root. Wires everything together.
+  INTERVIEW: The Api project is the only place where all layers meet.
+  It has references to all inner layers purely for DI registration at startup.
+  Controllers never directly reference Persistence or Infrastructure.
+-->
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <RootNamespace>NexaStore.Api</RootNamespace>
+    <!-- Enable UserSecrets for local dev — connection strings never in source control -->
+    <UserSecretsId>nexastore-api-secrets</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- API Versioning — shows architecture awareness in interviews -->
+    <PackageReference Include="Asp.Versioning.Mvc" Version="8.1.0" />
+    <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.1" />
+
+    <!-- Swagger / OpenAPI documentation -->
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+
+    <!-- Application Insights — structured logging, telemetry, request tracking -->
+    <!-- INTERVIEW: No Serilog needed. AppInsights plugs into ILogger natively -->
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.23.0" />
+
+    <!-- Health checks + SQL Server + Redis + Service Bus probes -->
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="8.0.5" />
+    <PackageReference Include="AspNetCore.HealthChecks.SqlServer" Version="8.0.1" />
+    <PackageReference Include="AspNetCore.HealthChecks.Redis" Version="8.0.1" />
+    <PackageReference Include="AspNetCore.HealthChecks.AzureServiceBus" Version="8.0.1" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.7.1" />
+    <PackageReference Include="System.Text.Json" Version="8.0.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NexaStore.Application\NexaStore.Application.csproj" />
+    <ProjectReference Include="..\NexaStore.Persistence\NexaStore.Persistence.csproj" />
+    <ProjectReference Include="..\NexaStore.Infrastructure\NexaStore.Infrastructure.csproj" />
+    <ProjectReference Include="..\NexaStore.Identity\NexaStore.Identity.csproj" />
+  </ItemGroup>
+</Project>

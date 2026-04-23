@@ -1,0 +1,45 @@
+﻿<!-- 
+  Functions — Azure Functions v4 isolated worker model.
+  INTERVIEW: Isolated worker = separate .NET process from the host. 
+  Full .NET 8 support, no legacy in-process limitations.
+  Reuses Application + Persistence + Infrastructure service registrations — 
+  DRY principle. No duplicate business logic.
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>NexaStore.Functions</RootNamespace>
+    <AzureFunctionsVersion>v4</AzureFunctionsVersion>
+    <!-- OutputType must be Exe for isolated worker model -->
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Azure Functions isolated worker SDK -->
+    <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.23.0" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.17.4" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Timer" Version="4.3.1" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.ServiceBus" Version="5.20.0" />
+
+    <!-- Application Insights for Functions -->
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.ApplicationInsights" Version="1.2.0" />
+    <PackageReference Include="System.Formats.Asn1" Version="6.0.1" />
+    <PackageReference Include="System.Text.Json" Version="8.0.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- host.json must be copied to output -->
+    <None Update="host.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="local.settings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NexaStore.Application\NexaStore.Application.csproj" />
+    <ProjectReference Include="..\NexaStore.Persistence\NexaStore.Persistence.csproj" />
+    <ProjectReference Include="..\NexaStore.Infrastructure\NexaStore.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>

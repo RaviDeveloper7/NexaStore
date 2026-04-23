@@ -1,0 +1,35 @@
+﻿<!-- 
+  Identity — ASP.NET Core Identity + JWT generation.
+  INTERVIEW: Separating Identity from Api means auth logic is testable and 
+  reusable. The Api project just consumes the IAuthService interface.
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>NexaStore.Identity</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- ASP.NET Core Identity — user management, password hashing, roles -->
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.5" />
+
+    <!-- JWT Bearer token generation and validation -->
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.5" />
+    <PackageReference Include="System.Formats.Asn1" Version="6.0.1" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.5.2" />
+
+    <!-- EF Core SQL Server — Identity has its own DbContext -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.5" />
+
+    <!-- Microsoft.Extensions for DI + Options -->
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
+
+    <!-- HttpContext access for CurrentUserService -->
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NexaStore.Application\NexaStore.Application.csproj" />
+  </ItemGroup>
+</Project>

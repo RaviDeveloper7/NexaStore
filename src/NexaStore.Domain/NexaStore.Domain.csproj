@@ -1,0 +1,11 @@
+﻿<!-- 
+  Domain has ZERO external dependencies.
+  INTERVIEW: Domain is the innermost layer — it contains only pure business rules.
+  No ORM, no framework, no infrastructure. This is the core of Clean Architecture.
+  If Domain has a NuGet reference, you've broken the architecture.
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>NexaStore.Domain</RootNamespace>
+  </PropertyGroup>
+</Project>

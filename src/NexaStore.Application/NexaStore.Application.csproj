@@ -1,0 +1,31 @@
+﻿<!-- 
+  Application layer — orchestration only.
+  INTERVIEW: Application depends only on Domain (inward). It defines interfaces
+  that outer layers implement. MediatR lives here because CQRS is an application concern.
+  FluentValidation lives here because validation is business logic, not infrastructure.
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>NexaStore.Application</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- MediatR — CQRS pipeline. Commands, Queries, Behaviours -->
+    <PackageReference Include="MediatR" Version="12.2.0" />
+
+    <!-- FluentValidation + MediatR integration for pipeline validation -->
+    <PackageReference Include="FluentValidation" Version="11.9.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.0" />
+
+    <!-- Mapster — DTO mapping, faster than AutoMapper and more explicit -->
+    <PackageReference Include="Mapster" Version="7.4.0" />
+    <PackageReference Include="Mapster.DependencyInjection" Version="1.0.1" />
+
+    <!-- Microsoft.Extensions.* — for IServiceCollection, IConfiguration in registration -->
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NexaStore.Domain\NexaStore.Domain.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,19 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="Directory.Build.props" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/NexaStore.Api/NexaStore.Api.csproj" />
+    <Project Path="src/NexaStore.Application/NexaStore.Application.csproj" />
+    <Project Path="src/NexaStore.Domain/NexaStore.Domain.csproj" />
+    <Project Path="src/NexaStore.Functions/NexaStore.Functions.csproj" />
+    <Project Path="src/NexaStore.Identity/NexaStore.Identity.csproj" />
+    <Project Path="src/NexaStore.Infrastructure/NexaStore.Infrastructure.csproj" />
+    <Project Path="src/NexaStore.Persistence/NexaStore.Persistence.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/NexaStore.Application.UnitTests/NexaStore.Application.UnitTests.csproj" />
+    <Project Path="tests/NexaStore.Persistence.IntegrationTests/NexaStore.Persistence.IntegrationTests.csproj" />
+  </Folder>
+</Solution>
