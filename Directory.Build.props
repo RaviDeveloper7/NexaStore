@@ -1,0 +1,30 @@
+<!-- 
+  Directory.Build.props — sits at solution root.
+  INTERVIEW: MSBuild auto-imports this file from the root into every project 
+  in the solution. Centralises version management so you never have version 
+  drift between projects. Enterprise standard.
+-->
+<Project>
+  <PropertyGroup>
+    <!-- Target framework applied to every project — override per-project if needed -->
+    <TargetFramework>net8.0</TargetFramework>
+
+    <!-- Treat all warnings as errors in CI — forces clean code -->
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+
+    <!-- Enable nullable reference types globally — eliminates null ref exceptions -->
+    <!-- INTERVIEW: Nullable reference types shift null checking to compile time -->
+    <Nullable>enable</Nullable>
+
+    <!-- Enable implicit usings — reduces boilerplate System.* using statements -->
+    <ImplicitUsings>enable</ImplicitUsings>
+
+    <!-- Enforce code style on build — EditorConfig rules are respected -->
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+
+    <!-- Company/author metadata — shows in NuGet and build output -->
+    <Authors>NexaStore</Authors>
+    <Company>NexaStore</Company>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+</Project>
