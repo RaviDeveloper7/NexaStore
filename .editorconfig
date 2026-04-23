@@ -1,0 +1,53 @@
+# .editorconfig — enforces consistent code style across the entire solution.
+# INTERVIEW: This is what separates a professional repo from a personal project.
+# Every IDE and build respects this file.
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = crlf
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.cs]
+# C# naming conventions
+dotnet_naming_rule.private_fields_should_be_camel_case.severity = warning
+dotnet_naming_rule.private_fields_should_be_camel_case.symbols = private_fields
+dotnet_naming_rule.private_fields_should_be_camel_case.style = camel_case_style
+
+dotnet_naming_symbols.private_fields.applicable_kinds = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+
+dotnet_naming_style.camel_case_style.capitalization = camel_case
+dotnet_naming_style.camel_case_style.required_prefix = _
+
+# Sort using directives: System first, then alphabetical
+dotnet_sort_system_directives_first = true
+dotnet_separate_import_directive_groups = false
+
+# Prefer var when type is obvious (reduces noise)
+csharp_style_var_for_built_in_types = false:suggestion
+csharp_style_var_when_type_is_apparent = true:suggestion
+csharp_style_var_elsewhere = false:suggestion
+
+# Expression-bodied members — use for simple one-liners only
+csharp_style_expression_bodied_methods = false:silent
+csharp_style_expression_bodied_properties = true:suggestion
+
+# Prefer file-scoped namespaces — cleaner, less nesting
+csharp_style_namespace_declarations = file_scoped:warning
+
+# Prefer primary constructors for simple types (C# 12)
+csharp_style_prefer_primary_constructors = true:suggestion
+
+[*.json]
+indent_size = 2
+
+[*.yml]
+indent_size = 2
+
+[*.md]
+trim_trailing_whitespace = false
