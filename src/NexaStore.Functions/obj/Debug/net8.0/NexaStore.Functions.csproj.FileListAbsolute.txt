@@ -149,3 +149,4 @@ C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Functions\bin\Debug\net8.0\Micro
 C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Functions\bin\Debug\net8.0\Microsoft.Extensions.Logging.ApplicationInsights.dll
 C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Functions\bin\Debug\net8.0\Microsoft.Extensions.ObjectPool.dll
 C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Functions\bin\Debug\net8.0\Microsoft.Net.Http.Headers.dll
+C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Functions\obj\Debug\net8.0\NexaStore.Functions.sourcelink.json

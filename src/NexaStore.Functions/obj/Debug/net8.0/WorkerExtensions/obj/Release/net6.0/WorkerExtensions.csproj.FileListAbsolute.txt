@@ -59,6 +59,7 @@ C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Functions\obj\Debug\net8.0\Worke
 C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Functions\obj\Debug\net8.0\WorkerExtensions\obj\Release\net6.0\WorkerExtensions.AssemblyInfoInputs.cache
 C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Functions\obj\Debug\net8.0\WorkerExtensions\obj\Release\net6.0\WorkerExtensions.AssemblyInfo.cs
 C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Functions\obj\Debug\net8.0\WorkerExtensions\obj\Release\net6.0\WorkerExtensions.csproj.CoreCompileInputs.cache
+C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Functions\obj\Debug\net8.0\WorkerExtensions\obj\Release\net6.0\WorkerExtensions.sourcelink.json
 C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Functions\obj\Debug\net8.0\WorkerExtensions\obj\Release\net6.0\WorkerEx.422953E6.Up2Date
 C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Functions\obj\Debug\net8.0\WorkerExtensions\obj\Release\net6.0\Microsoft.Azure.Functions.Worker.Extensions.dll
 C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Functions\obj\Debug\net8.0\WorkerExtensions\obj\Release\net6.0\refint\Microsoft.Azure.Functions.Worker.Extensions.dll

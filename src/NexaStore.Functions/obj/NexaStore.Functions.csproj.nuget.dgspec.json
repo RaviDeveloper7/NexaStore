@@ -31,6 +31,7 @@
         },
         "frameworks": {
           "net8.0": {
+            "framework": "net8.0",
             "targetAlias": "net8.0",
             "projectReferences": {
               "C:\\Users\\RAVI\\Documents\\NexaStore\\src\\NexaStore.Domain\\NexaStore.Domain.csproj": {
@@ -53,6 +54,7 @@
       },
       "frameworks": {
         "net8.0": {
+          "framework": "net8.0",
           "targetAlias": "net8.0",
           "dependencies": {
             "FluentValidation": {
@@ -127,6 +129,7 @@
         },
         "frameworks": {
           "net8.0": {
+            "framework": "net8.0",
             "targetAlias": "net8.0",
             "projectReferences": {}
           }
@@ -145,6 +148,7 @@
       },
       "frameworks": {
         "net8.0": {
+          "framework": "net8.0",
           "targetAlias": "net8.0",
           "imports": [
             "net461",
@@ -193,6 +197,7 @@
         },
         "frameworks": {
           "net8.0": {
+            "framework": "net8.0",
             "targetAlias": "net8.0",
             "projectReferences": {
               "C:\\Users\\RAVI\\Documents\\NexaStore\\src\\NexaStore.Application\\NexaStore.Application.csproj": {
@@ -221,6 +226,7 @@
       },
       "frameworks": {
         "net8.0": {
+          "framework": "net8.0",
           "targetAlias": "net8.0",
           "dependencies": {
             "Microsoft.Azure.Functions.Worker": {
@@ -242,10 +248,6 @@
             "Microsoft.Azure.Functions.Worker.Sdk": {
               "target": "Package",
               "version": "[1.17.4, )"
-            },
-            "System.Formats.Asn1": {
-              "target": "Package",
-              "version": "[6.0.1, )"
             },
             "System.Text.Json": {
               "target": "Package",
@@ -299,6 +301,7 @@
         },
         "frameworks": {
           "net8.0": {
+            "framework": "net8.0",
             "targetAlias": "net8.0",
             "projectReferences": {
               "C:\\Users\\RAVI\\Documents\\NexaStore\\src\\NexaStore.Application\\NexaStore.Application.csproj": {
@@ -321,15 +324,12 @@
       },
       "frameworks": {
         "net8.0": {
+          "framework": "net8.0",
           "targetAlias": "net8.0",
           "dependencies": {
             "Azure.Messaging.ServiceBus": {
               "target": "Package",
               "version": "[7.17.4, )"
-            },
-            "Microsoft.ApplicationInsights.AspNetCore": {
-              "target": "Package",
-              "version": "[2.23.0, )"
             },
             "Microsoft.Extensions.Configuration.Abstractions": {
               "target": "Package",
@@ -403,6 +403,7 @@
         },
         "frameworks": {
           "net8.0": {
+            "framework": "net8.0",
             "targetAlias": "net8.0",
             "projectReferences": {
               "C:\\Users\\RAVI\\Documents\\NexaStore\\src\\NexaStore.Application\\NexaStore.Application.csproj": {
@@ -425,6 +426,7 @@
       },
       "frameworks": {
         "net8.0": {
+          "framework": "net8.0",
           "targetAlias": "net8.0",
           "dependencies": {
             "Microsoft.EntityFrameworkCore": {
@@ -448,10 +450,6 @@
             "Microsoft.Extensions.DependencyInjection.Abstractions": {
               "target": "Package",
               "version": "[8.0.1, )"
-            },
-            "System.Formats.Asn1": {
-              "target": "Package",
-              "version": "[6.0.1, )"
             }
           },
           "imports": [

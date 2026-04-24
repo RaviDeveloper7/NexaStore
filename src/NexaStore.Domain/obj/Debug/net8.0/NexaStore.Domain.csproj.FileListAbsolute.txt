@@ -9,3 +9,4 @@ C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Domain\obj\Debug\net8.0\NexaStor
 C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Domain\obj\Debug\net8.0\refint\NexaStore.Domain.dll
 C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Domain\obj\Debug\net8.0\NexaStore.Domain.pdb
 C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Domain\obj\Debug\net8.0\ref\NexaStore.Domain.dll
+C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Domain\obj\Debug\net8.0\NexaStore.Domain.sourcelink.json

@@ -1,0 +1,42 @@
+## .gitignore for NexaStore — .NET + Azure solution
+
+# Build output
+bin/
+obj/
+
+# Visual Studio / Rider IDE files
+.vs/
+.idea/
+*.user
+*.suo
+*.userprefs
+
+# NuGet packages (restored automatically — never commit)
+packages/
+*.nupkg
+
+# local.settings.json — contains secrets, never commit
+**/local.settings.json
+
+# User Secrets — stored outside repo by design
+secrets.json
+
+# Environment-specific appsettings (secrets live in Azure Key Vault or User Secrets)
+appsettings.Production.json
+
+# EF Core migrations snapshot — commit the Migrations folder, not this
+# (actually keep migrations — comment this out)
+# **/Migrations/
+
+# Test results
+TestResults/
+coverage/
+*.trx
+*.coveragexml
+
+# Publish output
+publish/
+
+# OS files
+.DS_Store
+Thumbs.db

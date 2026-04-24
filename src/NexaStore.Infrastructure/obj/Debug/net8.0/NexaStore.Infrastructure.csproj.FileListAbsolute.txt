@@ -15,3 +15,4 @@ C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Infrastructure\obj\Debug\net8.0\
 C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Infrastructure\obj\Debug\net8.0\refint\NexaStore.Infrastructure.dll
 C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Infrastructure\obj\Debug\net8.0\NexaStore.Infrastructure.pdb
 C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Infrastructure\obj\Debug\net8.0\ref\NexaStore.Infrastructure.dll
+C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Infrastructure\obj\Debug\net8.0\NexaStore.Infrastructure.sourcelink.json

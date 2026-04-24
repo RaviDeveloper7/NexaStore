@@ -13,3 +13,4 @@ C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Application\obj\Debug\net8.0\Nex
 C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Application\obj\Debug\net8.0\refint\NexaStore.Application.dll
 C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Application\obj\Debug\net8.0\NexaStore.Application.pdb
 C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Application\obj\Debug\net8.0\ref\NexaStore.Application.dll
+C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Application\obj\Debug\net8.0\NexaStore.Application.sourcelink.json

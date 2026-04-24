@@ -260,3 +260,4 @@ C:\Users\RAVI\Documents\NexaStore\tests\NexaStore.Persistence.IntegrationTests\b
 C:\Users\RAVI\Documents\NexaStore\tests\NexaStore.Persistence.IntegrationTests\bin\Debug\net8.0\Microsoft.Net.Http.Headers.dll
 C:\Users\RAVI\Documents\NexaStore\tests\NexaStore.Persistence.IntegrationTests\bin\Debug\net8.0\System.Diagnostics.PerformanceCounter.dll
 C:\Users\RAVI\Documents\NexaStore\tests\NexaStore.Persistence.IntegrationTests\bin\Debug\net8.0\runtimes\win\lib\net6.0\System.Diagnostics.PerformanceCounter.dll
+C:\Users\RAVI\Documents\NexaStore\tests\NexaStore.Persistence.IntegrationTests\obj\Debug\net8.0\NexaStore.Persistence.IntegrationTests.sourcelink.json
