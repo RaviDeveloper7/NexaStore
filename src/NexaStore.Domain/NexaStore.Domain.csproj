@@ -1,11 +1,13 @@
-﻿<!-- 
-  Domain has ZERO external dependencies.
-  INTERVIEW: Domain is the innermost layer — it contains only pure business rules.
-  No ORM, no framework, no infrastructure. This is the core of Clean Architecture.
-  If Domain has a NuGet reference, you've broken the architecture.
--->
+﻿<!-- src/NexaStore.Domain/NexaStore.Domain.csproj -->
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <RootNamespace>NexaStore.Domain</RootNamespace>
-  </PropertyGroup>
+    <PropertyGroup>
+        <RootNamespace>NexaStore.Domain</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <!-- MediatR.Contracts only — lightweight, just INotification interface -->
+        <!-- INTERVIEW: We take MediatR.Contracts (not full MediatR) to keep Domain -->
+        <!-- lean. Domain only needs the INotification marker, not the full pipeline. -->
+        <PackageReference Include="MediatR.Contracts" Version="2.0.1" />
+    </ItemGroup>
 </Project>

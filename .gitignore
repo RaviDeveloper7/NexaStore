@@ -1,8 +1,8 @@
 ## .gitignore for NexaStore — .NET + Azure solution
 
 # Build output
-bin/
-obj/
+**/bin/
+**/obj/
 
 # Visual Studio / Rider IDE files
 .vs/

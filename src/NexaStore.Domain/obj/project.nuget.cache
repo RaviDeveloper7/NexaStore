@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "R23q+zHMRJU=",
+  "dgSpecHash": "84o8grvbHvU=",
   "success": true,
   "projectFilePath": "C:\\Users\\RAVI\\Documents\\NexaStore\\src\\NexaStore.Domain\\NexaStore.Domain.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\RAVI\\.nuget\\packages\\mediatr.contracts\\2.0.1\\mediatr.contracts.2.0.1.nupkg.sha512"
+  ],
   "logs": []
 }
