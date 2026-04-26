@@ -1638,6 +1638,7 @@
           "Mapster.DependencyInjection": "1.0.1",
           "MediatR": "12.2.0",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.2",
+          "Microsoft.Extensions.Logging.Abstractions": "8.0.2",
           "NexaStore.Domain": "1.0.0"
         },
         "runtime": {
@@ -1648,6 +1649,9 @@
         }
       },
       "NexaStore.Domain/1.0.0": {
+        "dependencies": {
+          "MediatR.Contracts": "2.0.1"
+        },
         "runtime": {
           "NexaStore.Domain.dll": {
             "assemblyVersion": "1.0.0.0",

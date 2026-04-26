@@ -40,3 +40,7 @@ publish/
 # OS files
 .DS_Store
 Thumbs.db
+/src/NexaStore.Functions/obj
+/src/NexaStore.Functions/bin
+/src/NexaStore.Application/bin
+/src/NexaStore.Domain/obj

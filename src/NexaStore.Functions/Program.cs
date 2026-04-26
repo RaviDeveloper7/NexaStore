@@ -12,7 +12,7 @@ var host = new HostBuilder()
         services.AddApplicationServices();
         services.AddPersistenceServices(ctx.Configuration);
         services.AddInfrastructureServices(ctx.Configuration);
-        services.AddApplicationInsightsTelemetry();
+      //  services.AddApplicationInsightsTelemetry();
     })
     .Build();
 

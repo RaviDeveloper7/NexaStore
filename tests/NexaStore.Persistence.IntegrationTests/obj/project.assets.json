@@ -2563,6 +2563,7 @@
           "Mapster.DependencyInjection": "1.0.1",
           "MediatR": "12.2.0",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.1",
+          "Microsoft.Extensions.Logging.Abstractions": "8.0.1",
           "NexaStore.Domain": "1.0.0"
         },
         "compile": {

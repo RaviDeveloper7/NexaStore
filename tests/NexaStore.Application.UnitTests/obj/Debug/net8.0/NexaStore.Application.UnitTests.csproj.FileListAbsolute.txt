@@ -119,3 +119,4 @@ C:\Users\RAVI\Documents\NexaStore\tests\NexaStore.Application.UnitTests\obj\Debu
 C:\Users\RAVI\Documents\NexaStore\tests\NexaStore.Application.UnitTests\obj\Debug\net8.0\NexaStore.Application.UnitTests.genruntimeconfig.cache
 C:\Users\RAVI\Documents\NexaStore\tests\NexaStore.Application.UnitTests\obj\Debug\net8.0\ref\NexaStore.Application.UnitTests.dll
 C:\Users\RAVI\Documents\NexaStore\tests\NexaStore.Application.UnitTests\obj\Debug\net8.0\NexaStore.Application.UnitTests.sourcelink.json
+C:\Users\RAVI\Documents\NexaStore\tests\NexaStore.Application.UnitTests\bin\Debug\net8.0\Microsoft.Extensions.Logging.Abstractions.dll
