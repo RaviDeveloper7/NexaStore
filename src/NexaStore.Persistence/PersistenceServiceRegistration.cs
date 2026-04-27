@@ -1,12 +1,19 @@
-// PersistenceServiceRegistration.cs — registers the DbContext and its dependencies.
-// INTERVIEW: This is the only place in the solution that knows SQL Server is being used.
-// If you switch to PostgreSQL, you change the UseSqlServer call here — nothing else.
-// Application layer, handlers, and tests are all completely unaware.
+// Registers all repositories and UnitOfWork.
+// INTERVIEW: Every registration here is Scoped — one instance per HTTP request.
+// This is correct because:
+// - DbContext is Scoped (EF Core requirement — never Singleton)
+// - Repositories wrap DbContext — must match its lifetime (Scoped)
+// - UnitOfWork wraps DbContext — must be Scoped for the same reason
+// Singleton repositories would share one DbContext across all requests,
+// causing thread-safety issues and stale cached data — a classic bug.
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NexaStore.Application.Common.Interfaces.Persistence;
+using NexaStore.Application.Common.Interfaces.Services;
 using NexaStore.Persistence.DatabaseContext;
+using NexaStore.Persistence.Repositories;
 
 namespace NexaStore.Persistence;
 
@@ -16,49 +23,64 @@ public static class PersistenceServiceRegistration
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        // Register AppDbContext with SQL Server provider
-        // INTERVIEW: The connection string key "DefaultConnection" is the ASP.NET
-        // convention — matches what appsettings.json and Azure App Service
-        // connection string configuration use by default.
+        // --- DbContext ---
         services.AddDbContext<AppDbContext>(options =>
         {
             options.UseSqlServer(
                 configuration.GetConnectionString("DefaultConnection"),
                 sqlOptions =>
                 {
-                    // INTERVIEW: EnableRetryOnFailure is production-critical for Azure SQL.
-                    // Transient connection failures (network blips, throttling) are retried
-                    // automatically. Without this, a momentary Azure SQL hiccup throws an
-                    // exception and fails the request.
+                    // INTERVIEW: EnableRetryOnFailure handles Azure SQL transient faults.
+                    // Azure SQL can throttle connections under load — without retry,
+                    // these surface as exceptions to the user. With retry, they're silent.
                     sqlOptions.EnableRetryOnFailure(
                         maxRetryCount: 3,
                         maxRetryDelay: TimeSpan.FromSeconds(5),
                         errorNumbersToAdd: null);
 
-                    // MigrationsAssembly tells EF where to find migration files
-                    // INTERVIEW: Required when DbContext is in a different project
-                    // from where you run dotnet-ef migrations — which is our case.
                     sqlOptions.MigrationsAssembly(
                         typeof(AppDbContext).Assembly.FullName);
                 });
 
-            // INTERVIEW: In development, log all generated SQL to the console.
-            // This is how you catch N+1 queries and missing indexes early.
-            // Never leave EnableSensitiveDataLogging on in production — it logs
-            // parameter values which may contain PII or secrets.
 #if DEBUG
+            // INTERVIEW: Only enable sensitive data logging in DEBUG builds.
+            // In production, this would log parameter values containing
+            // customer emails, passwords, payment details — a GDPR violation.
             options.EnableSensitiveDataLogging();
             options.EnableDetailedErrors();
 #endif
         });
 
-        // Repositories and UoW will be registered here in Week 2 Day 2-3
-        // Placeholder comment so you know where they go:
-        // services.AddScoped<IUnitOfWork, UnitOfWork>();
-        // services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-        // services.AddScoped<IProductRepository, ProductRepository>();
-        // services.AddScoped<IOrderRepository, OrderRepository>();
-        // services.AddScoped<IOutboxRepository, OutboxRepository>();
+        // --- Unit of Work ---
+        // INTERVIEW: Scoped — one UoW per request, wrapping one DbContext per request.
+        // All repository operations in a single request share this UoW instance,
+        // so they all participate in the same change-tracking session.
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+        // --- Generic Repository ---
+        // INTERVIEW: Open generic registration — AddScoped(typeof(IGenericRepository<>))
+        // means DI can resolve IGenericRepository<Product>, IGenericRepository<Category>
+        // etc. without registering each one explicitly.
+        // When a specific repo is also registered (IProductRepository → ProductRepository),
+        // DI resolves the specific one when IProductRepository is requested,
+        // and the generic one when IGenericRepository<Product> is requested.
+        services.AddScoped(
+            typeof(IGenericRepository<>),
+            typeof(GenericRepository<>));
+
+        // --- Specific Repositories ---
+        // INTERVIEW: Specific repos extend GenericRepository but add domain queries.
+        // Registering them separately allows handlers to depend on the specific
+        // interface (IProductRepository) and get all domain methods via DI.
+        services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped<IOrderRepository, OrderRepository>();
+
+        // --- Outbox Repository ---
+        // INTERVIEW: IOutboxRepository is in Application.Common.Interfaces.Services
+        // (not Persistence) because the Functions project also depends on it.
+        // It's registered here because OutboxRepository (the implementation) is
+        // in the Persistence layer — that's where it belongs.
+        services.AddScoped<IOutboxRepository, OutboxRepository>();
 
         return services;
     }
