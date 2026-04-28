@@ -8,6 +8,7 @@ using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using NexaStore.Application.Common.Behaviours;
+using NexaStore.Application.Common.Mappings;
 
 namespace NexaStore.Application;
 
@@ -27,6 +28,13 @@ public static class ApplicationServiceRegistration
         // INTERVIEW: Same scan approach — all AbstractValidator<T> classes
         // are registered automatically. ValidationBehaviour picks them up via DI.
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+
+
+        // Mapster — scan assembly for all IRegister profiles, compile and validate
+        // INTERVIEW: Must be called after MediatR/FluentValidation registrations
+        // because Compile() validates all registered mappings eagerly.
+        // Any mapping error surfaces here at startup with a clear exception.
+        services.AddMapsterMappings();
 
         // Register MediatR pipeline behaviours — ORDER MATTERS.
         // INTERVIEW: Behaviours wrap the handler like middleware wraps HTTP requests.
