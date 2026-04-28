@@ -32,9 +32,8 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         // The downside is the DB column shows numbers, not names.
         // Trade-off: use a view or stored proc for human-readable reporting if needed.
         builder.Property(o => o.Status)
-            .IsRequired()
-            .HasConversion<int>()          // Store OrderStatus enum as int
-            .HasDefaultValue(OrderStatus.Pending);
+             .IsRequired()
+             .HasConversion<int>();
 
         builder.Property(o => o.TotalAmount)
             .IsRequired()

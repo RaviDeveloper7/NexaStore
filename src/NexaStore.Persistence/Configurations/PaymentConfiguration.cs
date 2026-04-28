@@ -34,8 +34,7 @@ public class PaymentConfiguration : IEntityTypeConfiguration<Payment>
 
         builder.Property(p => p.Status)
             .IsRequired()
-            .HasConversion<int>()
-            .HasDefaultValue(PaymentStatus.Pending);
+            .HasConversion<int>();
 
         // Method stored as string — e.g. "CreditCard", "PayPal", "BankTransfer"
         // MaxLength 50 is more than enough for any payment method name

@@ -3,7 +3,7 @@
   "Values": {
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
-    "ConnectionStrings__DefaultConnection": "Server=localhost;Database=NexaStoreDb;Trusted_Connection=True;TrustServerCertificate=True;",
+    "ConnectionStrings__DefaultConnection": "Server=.;Database=NexaStoreDb;Trusted_Connection=True;TrustServerCertificate=True;",
     "ServiceBus__ConnectionString": "",
     "ServiceBus__OrderPlacedTopic": "order-placed",
     "ServiceBus__OrderCancelledTopic": "order-cancelled",
