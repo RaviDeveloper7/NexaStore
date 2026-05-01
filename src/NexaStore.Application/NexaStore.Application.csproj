@@ -29,4 +29,8 @@
   <ItemGroup>
     <ProjectReference Include="..\NexaStore.Domain\NexaStore.Domain.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Common\MappingExtensions\" />
+  </ItemGroup>
 </Project>
