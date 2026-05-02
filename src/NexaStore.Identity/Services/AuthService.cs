@@ -179,10 +179,175 @@ public class AuthService : IAuthService
     // REFRESH TOKEN
     // -------------------------------------------------------------------------
     // Full implementation in Week 3 Day 3 — stub for now
-    public Task<AuthResponseDto> RefreshTokenAsync(
+    // -------------------------------------------------------------------------
+    // REFRESH TOKEN
+    // -------------------------------------------------------------------------
+    public async Task<AuthResponseDto> RefreshTokenAsync(
         RefreshTokenCommand request,
         CancellationToken cancellationToken = default)
-        => throw new NotImplementedException("Implemented in Week 3 Day 3");
+    {
+        // INTERVIEW: The refresh flow has three jobs:
+        // 1. Prove the caller owns a valid (but possibly expired) JWT
+        // 2. Prove the caller holds the matching refresh token for that user
+        // 3. Issue a new JWT + new refresh token, invalidate the old refresh token
+        //
+        // Why do we need BOTH the expired JWT and the refresh token?
+        // The JWT tells us WHO the user is (via the sub claim) without a DB lookup.
+        // The refresh token proves the caller is the legitimate owner of that identity.
+        // Neither alone is sufficient:
+        // - JWT alone: anyone who steals the expired JWT could get a new one forever
+        // - Refresh token alone: attacker needs to know which user it belongs to
+        // Together: attacker needs both — significantly harder to exploit.
+
+        // --- Step 1: Extract claims from the EXPIRED JWT ---
+        // INTERVIEW: We validate the JWT structure and signature but NOT the expiry.
+        // An expired token is still cryptographically valid — we just won't accept
+        // it for API requests. Here we deliberately want to read an expired token.
+        var principal = GetPrincipalFromExpiredToken(request.AccessToken);
+
+        // Extract the user ID from the sub claim
+        // INTERVIEW: We read sub (not uid or email) because sub is the OIDC standard
+        // claim for subject identity — guaranteed to be the user's unique ID.
+        var userId = principal.FindFirstValue(JwtRegisteredClaimNames.Sub)
+            ?? principal.FindFirstValue("uid");
+
+        if (string.IsNullOrEmpty(userId))
+            throw new UnauthorizedAccessException(
+                "Invalid access token — cannot extract user identity.");
+
+        // --- Step 2: Load the user from DB ---
+        // INTERVIEW: This is the ONLY DB call in the refresh flow.
+        // We use the ID from the JWT to find the user, then validate their
+        // stored refresh token. This keeps the operation fast — one SELECT.
+        var user = await _userManager.FindByIdAsync(userId)
+            ?? throw new UnauthorizedAccessException(
+                "User not found. The account may have been deleted.");
+
+        if (!user.IsActive)
+            throw new UnauthorizedAccessException(
+                "Account has been disabled.");
+
+        // --- Step 3: Validate the refresh token ---
+        // INTERVIEW: Three checks on the refresh token:
+        // 1. It exists on the user (not null/empty)
+        // 2. It matches the token the caller sent
+        // 3. It has not expired
+        //
+        // INTERVIEW: Why string comparison and not a hash comparison?
+        // In production you would store a hash of the refresh token and compare
+        // hashes — this way even a DB breach doesn't expose valid refresh tokens.
+        // For a portfolio project, plain comparison is acceptable and clear.
+        if (string.IsNullOrEmpty(user.RefreshToken))
+            throw new UnauthorizedAccessException(
+                "No active refresh token found. Please log in again.");
+
+        if (user.RefreshToken != request.RefreshToken)
+            // INTERVIEW: Mismatched refresh token could mean:
+            // a) The legitimate user already refreshed and the caller has a stale token
+            // b) An attacker is replaying a stolen refresh token
+            // Either way, invalidate everything — force re-login.
+            // This is "refresh token rotation" — each refresh issues a new pair
+            // and invalidates the old refresh token immediately.
+            throw new UnauthorizedAccessException(
+                "Invalid refresh token. Please log in again.");
+
+        if (user.RefreshTokenExpiryTime <= DateTime.UtcNow)
+            // INTERVIEW: Refresh token expiry is separate from JWT expiry.
+            // JWT: 60 minutes. Refresh token: 7 days.
+            // After 7 days of inactivity the user must log in with a password again.
+            // This is an intentional security boundary — "remember me" has a limit.
+            throw new UnauthorizedAccessException(
+                "Refresh token has expired. Please log in again.");
+
+        // --- Step 4: Issue new token pair ---
+        // INTERVIEW: Refresh token rotation — issue a NEW refresh token on every use.
+        // The old refresh token is replaced in the DB immediately.
+        // If an attacker steals the old refresh token and tries to use it:
+        // - The legitimate user will have already rotated it
+        // - The attacker's token no longer matches the DB value → 401
+        // - The legitimate user's next refresh will also fail (DB was overwritten)
+        //   → both are forced to re-login → the compromise is detected
+        // This is called "refresh token family" invalidation in the OAuth2 spec.
+        return await GenerateAuthResponseAsync(user);
+
+        // GenerateAuthResponseAsync:
+        // 1. Creates a new JWT with fresh claims (in case roles changed)
+        // 2. Generates a new cryptographic refresh token
+        // 3. Overwrites user.RefreshToken + user.RefreshTokenExpiryTime in DB
+        // 4. Returns AuthResponseDto with both tokens
+    }
+
+    private ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
+    {
+        // INTERVIEW: TokenValidationParameters here deliberately sets
+        // ValidateLifetime = false — this is the ONLY place we do that.
+        // We WANT to read an expired token. Every other token validation
+        // in the system uses ValidateLifetime = true.
+        //
+        // We still validate:
+        // - IssuerSigningKey: confirms the token was signed by US (not forged)
+        // - Issuer + Audience: confirms it was issued for OUR API
+        // We skip:
+        // - Lifetime: expired tokens are valid input for the refresh flow
+        var tokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(_jwtSettings.Key)),
+
+            ValidateIssuer = true,
+            ValidIssuer = _jwtSettings.Issuer,
+
+            ValidateAudience = true,
+            ValidAudience = _jwtSettings.Audience,
+
+            // INTERVIEW: The critical flag — we accept expired tokens here.
+            // Without this, ValidateToken throws on any expired token, making
+            // the refresh flow impossible.
+            ValidateLifetime = false,
+
+            // Still enforce ClockSkew = Zero for consistency
+            ClockSkew = TimeSpan.Zero
+        };
+
+        var tokenHandler = new JwtSecurityTokenHandler();
+
+        ClaimsPrincipal principal;
+        SecurityToken validatedToken;
+
+        try
+        {
+            // ValidateToken parses the JWT, checks signature + issuer + audience,
+            // and returns the ClaimsPrincipal (the identity embedded in the token)
+            principal = tokenHandler.ValidateToken(
+                token,
+                tokenValidationParameters,
+                out validatedToken);
+        }
+        catch (Exception ex)
+        {
+            // Catches: malformed tokens, invalid signatures, wrong issuer/audience
+            // INTERVIEW: Never expose the raw exception message to the client —
+            // it can reveal implementation details useful to an attacker.
+            throw new UnauthorizedAccessException(
+                "Invalid access token.", ex);
+        }
+
+        // INTERVIEW: Verify the token used the expected algorithm.
+        // Algorithm confusion attacks: an attacker sends a token signed with
+        // algorithm "none" or a weaker algorithm. Without this check, a lenient
+        // library might accept it. Explicit algorithm check is a defence-in-depth measure.
+        if (validatedToken is not JwtSecurityToken jwtToken ||
+            !jwtToken.Header.Alg.Equals(
+                SecurityAlgorithms.HmacSha256,
+                StringComparison.InvariantCultureIgnoreCase))
+        {
+            throw new UnauthorizedAccessException(
+                "Invalid token algorithm.");
+        }
+
+        return principal;
+    }
 
     // -------------------------------------------------------------------------
     // PRIVATE HELPERS

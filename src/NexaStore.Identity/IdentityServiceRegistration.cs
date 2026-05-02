@@ -31,6 +31,12 @@ public static class IdentityServiceRegistration
         services.Configure<JwtSettings>(
             configuration.GetSection(JwtSettings.SectionName));
 
+        // INTERVIEW: AddHttpContextAccessor registers IHttpContextAccessor as
+        // Singleton. It uses AsyncLocal<T> internally to store a per-request
+        // reference to HttpContext — thread-safe across async/await boundaries.
+        // Without this, CurrentUserService cannot access the HTTP context.
+        services.AddHttpContextAccessor(); // ← ADD THIS LINE
+
         // --- Identity DbContext ---
         services.AddDbContext<NexaStoreIdentityDbContext>(options =>
         {

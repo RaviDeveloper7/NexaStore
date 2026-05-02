@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("NexaStore")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b654980232d0bfcf2edbc461757f45cbc15e1e4e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9d73e60ae658b31eea4d452fa7f58d1a2c44fd09")]
 [assembly: System.Reflection.AssemblyProductAttribute("NexaStore.Application.UnitTests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("NexaStore.Application.UnitTests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
