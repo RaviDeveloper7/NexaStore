@@ -116,4 +116,18 @@ public class ProductRepository : GenericRepository<Product>, IProductRepository
             .Where(p => idList.Contains(p.Id))
             .ToListAsync(cancellationToken);
     }
+
+    public async Task<Product?> GetByIdWithCategoryAsync(
+    Guid id,
+    CancellationToken cancellationToken = default)
+    {
+        // INTERVIEW: AsNoTracking + Include — read-only query handler
+        // does not need EF change tracking. This is a Query (read),
+        // not a Command (write) — AsNoTracking is always correct here.
+        // Single JOIN: Products INNER JOIN Categories ON CategoryId = Id
+        return await _dbSet
+            .AsNoTracking()
+            .Include(p => p.Category)
+            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
+    }
 }

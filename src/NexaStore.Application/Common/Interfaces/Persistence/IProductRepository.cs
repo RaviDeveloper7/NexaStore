@@ -27,4 +27,9 @@ public interface IProductRepository : IGenericRepository<Product>
     Task<IReadOnlyList<Product>> GetByIdsAsync(
         IEnumerable<Guid> ids,
         CancellationToken cancellationToken = default);
+
+    // Loads a single product with its Category — for detail view
+    Task<Product?> GetByIdWithCategoryAsync(
+        Guid id,
+        CancellationToken cancellationToken = default);
 }

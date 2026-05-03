@@ -1,5 +1,5 @@
 // ProductMappingProfile.cs — Mapster configuration for Product entity.
-// INTERVIEW: Mapster uses IRegister (not AutoMapper's Profile) for configuration.
+// IN: Mapster uses IRegister (not AutoMapper's Profile) for configuration.
 // Register() is called once at startup via MappingExtensions.RegisterMapsterMappings().
 // Mapster is faster than AutoMapper because it generates IL code at startup
 // rather than using reflection on every map call.
@@ -18,7 +18,7 @@ public class ProductMappingProfile : IRegister
         // --- Product → ProductListDto ---
         config.NewConfig<Product, ProductListDto>()
 
-            // INTERVIEW: Mapster handles same-name properties automatically.
+            // IN: Mapster handles same-name properties automatically.
             // We only need to configure properties that DON'T match by name.
             // CategoryName does not exist on Product — it lives on Product.Category.Name.
             // Map() tells Mapster exactly where to find it.
