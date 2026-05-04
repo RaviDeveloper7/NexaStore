@@ -1,5 +1,5 @@
 // ProductRepository.cs — product-specific query implementations.
-// INTERVIEW: Inherits all CRUD from GenericRepository<Product>.
+// IN: Inherits all CRUD from GenericRepository<Product>.
 // This class only adds what the generic repo cannot express:
 // 1. Paginated + filtered + sorted product listing with Redis-cacheable results
 // 2. Batch fetch by IDs for stock validation in PlaceOrderCommandHandler
@@ -121,7 +121,7 @@ public class ProductRepository : GenericRepository<Product>, IProductRepository
     Guid id,
     CancellationToken cancellationToken = default)
     {
-        // INTERVIEW: AsNoTracking + Include — read-only query handler
+        // IN: AsNoTracking + Include — read-only query handler
         // does not need EF change tracking. This is a Query (read),
         // not a Command (write) — AsNoTracking is always correct here.
         // Single JOIN: Products INNER JOIN Categories ON CategoryId = Id
@@ -129,5 +129,32 @@ public class ProductRepository : GenericRepository<Product>, IProductRepository
             .AsNoTracking()
             .Include(p => p.Category)
             .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
+    }
+
+    // ProductRepository.cs — production-safe stock decrement
+    public async Task<bool> DecrementStockAsync(
+        Guid productId,
+        int quantity,
+        CancellationToken cancellationToken = default)
+    {
+        // IN: ExecuteUpdateAsync with a WHERE guard.
+        // This generates:
+        // UPDATE Products
+        //    SET StockQuantity = StockQuantity - @qty
+        //  WHERE Id = @id AND StockQuantity >= @qty
+        //
+        // If another request decremented stock between our check and our update,
+        // the WHERE condition fails → 0 rows affected → we know stock ran out.
+        // No race condition possible — the check and decrement are ONE atomic SQL statement.
+        var rowsAffected = await _context.Products
+            .Where(p => p.Id == productId && p.StockQuantity >= quantity)
+            .ExecuteUpdateAsync(
+                s => s.SetProperty(
+                    p => p.StockQuantity,
+                    p => p.StockQuantity - quantity),
+                cancellationToken);
+
+        // 0 rows affected = stock was insufficient (concurrent order beat us)
+        return rowsAffected > 0;
     }
 }

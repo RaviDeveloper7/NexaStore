@@ -8,6 +8,11 @@
   <PropertyGroup>
     <RootNamespace>NexaStore.Application</RootNamespace>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Common\MappingExtensions\**" />
+    <EmbeddedResource Remove="Common\MappingExtensions\**" />
+    <None Remove="Common\MappingExtensions\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <!-- MediatR — CQRS pipeline. Commands, Queries, Behaviours -->
@@ -28,9 +33,5 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NexaStore.Domain\NexaStore.Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Common\MappingExtensions\" />
   </ItemGroup>
 </Project>
