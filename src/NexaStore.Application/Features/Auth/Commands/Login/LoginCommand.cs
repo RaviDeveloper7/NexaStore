@@ -1,4 +1,9 @@
-// Stub — full implementation in Week 4 Day 5.
+// LoginCommand.cs — full implementation replacing the Week 1 stub.
+// IN: Login only needs Email and Password.
+// Device information, IP address, user-agent — these are captured in middleware
+// or enriched by Application Insights automatically.
+// Keep the command lean — it carries only what the authentication flow needs.
+
 using MediatR;
 
 namespace NexaStore.Application.Features.Auth.Commands.Login;
