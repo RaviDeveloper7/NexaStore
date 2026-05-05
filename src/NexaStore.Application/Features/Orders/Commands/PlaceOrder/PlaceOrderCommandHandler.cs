@@ -1,5 +1,5 @@
 // PlaceOrderCommandHandler.cs — the most important handler in the entire solution.
-// N: Every major pattern in the codebase converges here.
+// IN: Every major pattern in the codebase converges here.
 // Walk through this handler line-by-line in interviews — it demonstrates:
 //
 // 1. Security     — CustomerId from JWT, not from request body
@@ -147,7 +147,7 @@ public class PlaceOrderCommandHandler
         }
 
         // All stock checks passed — now decrement
-        // INTERVIEW: Decrementing in-memory on tracked entities.
+        // IN: Decrementing in-memory on tracked entities.
         // EF's change tracker detects these property changes.
         // When SaveChangesAsync fires, EF generates:
         // UPDATE Products SET StockQuantity = @newValue WHERE Id = @id
@@ -268,7 +268,7 @@ public class PlaceOrderCommandHandler
         {
             Id = Guid.NewGuid(),
             Type = typeof(OrderPlacedEvent).FullName!,
-            // INTERVIEW: JsonSerializer.Serialize — using System.Text.Json (built-in).
+            // IN: JsonSerializer.Serialize — using System.Text.Json (built-in).
             // No Newtonsoft.Json dependency in Application layer.
             // The Type field tells the OutboxProcessor which class to deserialise to.
             Payload = JsonSerializer.Serialize(orderPlacedEvent),
