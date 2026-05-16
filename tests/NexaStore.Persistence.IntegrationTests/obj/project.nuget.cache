@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "fNPcobkRyQs=",
+  "dgSpecHash": "YglS/FcgJeo=",
   "success": true,
   "projectFilePath": "C:\\Users\\RAVI\\Documents\\NexaStore\\tests\\NexaStore.Persistence.IntegrationTests\\NexaStore.Persistence.IntegrationTests.csproj",
   "expectedPackageFiles": [
@@ -129,7 +129,10 @@
     "C:\\Users\\RAVI\\.nuget\\packages\\xunit.core\\2.8.1\\xunit.core.2.8.1.nupkg.sha512",
     "C:\\Users\\RAVI\\.nuget\\packages\\xunit.extensibility.core\\2.8.1\\xunit.extensibility.core.2.8.1.nupkg.sha512",
     "C:\\Users\\RAVI\\.nuget\\packages\\xunit.extensibility.execution\\2.8.1\\xunit.extensibility.execution.2.8.1.nupkg.sha512",
-    "C:\\Users\\RAVI\\.nuget\\packages\\xunit.runner.visualstudio\\2.8.1\\xunit.runner.visualstudio.2.8.1.nupkg.sha512"
+    "C:\\Users\\RAVI\\.nuget\\packages\\xunit.runner.visualstudio\\2.8.1\\xunit.runner.visualstudio.2.8.1.nupkg.sha512",
+    "C:\\Users\\RAVI\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\8.0.27\\microsoft.windowsdesktop.app.ref.8.0.27.nupkg.sha512",
+    "C:\\Users\\RAVI\\.nuget\\packages\\microsoft.netcore.app.ref\\8.0.27\\microsoft.netcore.app.ref.8.0.27.nupkg.sha512",
+    "C:\\Users\\RAVI\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\8.0.27\\microsoft.aspnetcore.app.ref.8.0.27.nupkg.sha512"
   ],
   "logs": []
 }

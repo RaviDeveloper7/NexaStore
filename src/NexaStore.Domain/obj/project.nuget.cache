@@ -1,10 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "DEuxFkF8zpc=",
+  "dgSpecHash": "IsGXw3IyLhs=",
   "success": true,
   "projectFilePath": "C:\\Users\\RAVI\\Documents\\NexaStore\\src\\NexaStore.Domain\\NexaStore.Domain.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\RAVI\\.nuget\\packages\\mediatr.contracts\\2.0.1\\mediatr.contracts.2.0.1.nupkg.sha512"
+    "C:\\Users\\RAVI\\.nuget\\packages\\mediatr.contracts\\2.0.1\\mediatr.contracts.2.0.1.nupkg.sha512",
+    "C:\\Users\\RAVI\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\8.0.27\\microsoft.windowsdesktop.app.ref.8.0.27.nupkg.sha512",
+    "C:\\Users\\RAVI\\.nuget\\packages\\microsoft.netcore.app.ref\\8.0.27\\microsoft.netcore.app.ref.8.0.27.nupkg.sha512",
+    "C:\\Users\\RAVI\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\8.0.27\\microsoft.aspnetcore.app.ref.8.0.27.nupkg.sha512"
   ],
   "logs": []
 }

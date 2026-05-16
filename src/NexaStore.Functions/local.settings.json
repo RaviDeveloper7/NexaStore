@@ -8,6 +8,10 @@
     "ServiceBus__OrderPlacedTopic": "order-placed",
     "ServiceBus__OrderCancelledTopic": "order-cancelled",
     "ServiceBus__PaymentCompletedTopic": "payment-completed",
-    "ApplicationInsights__ConnectionString": ""
+    "ApplicationInsights__ConnectionString": "",
+    "Redis__ConnectionString": "localhost:6379",
+    "Redis__DefaultExpiryMinutes": "5",
+    "Redis__DatabaseIndex": "0",
+    "Redis__InstanceName": "nexastore:"
   }
 }
