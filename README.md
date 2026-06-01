@@ -14,7 +14,7 @@
 
 NexaStore is a production-grade backend API for managing digital storefronts, inventory, and e-commerce workflows. It is intentionally over-engineered for a portfolio context — every layer, pattern, and tool reflects real enterprise .NET engineering decisions with documented reasoning.
 
-The goal is not just a working API. It is a codebase that demonstrates architectural thinking, cloud-native design, and the patterns most commonly discussed in senior .NET interviews.
+The goal is not just a working API. It is a codebase that demonstrates architectural thinking, cloud-native design, and the patterns most commonly used.
 
 ---
 
