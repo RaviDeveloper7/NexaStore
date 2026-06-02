@@ -10,19 +10,11 @@ public interface IEmailService
 {
     // Sends an order confirmation email to the customer.
     // Called by OrderPlacedConsumerFunction after consuming from Service Bus.
-    Task SendOrderConfirmationAsync(
-        string toEmail,
-        string customerName,
-        Guid orderId,
-        decimal totalAmount,
-        CancellationToken cancellationToken = default);
+    Task SendOrderConfirmationAsync(string toEmail,string customerName,
+        Guid orderId,decimal totalAmount,CancellationToken cancellationToken = default);
 
     // Sends an order cancellation notification.
     // Called by CancelOrderCommandHandler or OrderExpiryFunction.
-    Task SendOrderCancellationAsync(
-        string toEmail,
-        string customerName,
-        Guid orderId,
-        string reason,
-        CancellationToken cancellationToken = default);
+    Task SendOrderCancellationAsync(string toEmail,string customerName,Guid orderId,
+        string reason,CancellationToken cancellationToken = default);
 }

@@ -53,8 +53,7 @@ public class AppDbContext : DbContext
     // INTERVIEW: Overriding SaveChangesAsync is the standard pattern for
     // cross-cutting concerns like audit timestamps and domain event dispatch.
     // This fires for EVERY save in the system — no handler needs to set these manually.
-    public override async Task<int> SaveChangesAsync(
-        CancellationToken cancellationToken = default)
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         // --- Audit timestamp interception ---
         // Walk every tracked entity that is BaseEntity and has been Added or Modified

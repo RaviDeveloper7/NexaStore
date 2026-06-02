@@ -30,8 +30,7 @@ using NexaStore.Domain.Exceptions;
 
 namespace NexaStore.Application.Features.Orders.Commands.PlaceOrder;
 
-public class PlaceOrderCommandHandler
-    : IRequestHandler<PlaceOrderCommand, Guid>
+public class PlaceOrderCommandHandler : IRequestHandler<PlaceOrderCommand, Guid>
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IProductRepository _productRepository;

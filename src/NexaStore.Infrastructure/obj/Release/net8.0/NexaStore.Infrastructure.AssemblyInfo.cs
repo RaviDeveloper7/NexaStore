@@ -11,10 +11,10 @@
 using System;
 using System.Reflection;
 
-[assembly: System.Reflection.AssemblyCompanyAttribute("NexaStore.Infrastructure")]
+[assembly: System.Reflection.AssemblyCompanyAttribute("NexaStore")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9e76b65f682d479045c5ca134dc3ef065f1069bc")]
 [assembly: System.Reflection.AssemblyProductAttribute("NexaStore.Infrastructure")]
 [assembly: System.Reflection.AssemblyTitleAttribute("NexaStore.Infrastructure")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

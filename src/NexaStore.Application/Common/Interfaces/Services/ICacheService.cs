@@ -14,11 +14,7 @@ public interface ICacheService
 
     // Store a value with an optional TTL (time-to-live).
     // If expiry is null, the key persists until evicted by Redis memory policy.
-    Task SetAsync<T>(
-        string key,
-        T value,
-        TimeSpan? expiry = null,
-        CancellationToken cancellationToken = default);
+    Task SetAsync<T>(string key,T value,TimeSpan? expiry = null,CancellationToken cancellationToken = default);
 
     // Invalidate a cached value by key.
     // Called by CreateProduct, UpdateProduct, DeleteProduct handlers

@@ -11,8 +11,7 @@ namespace NexaStore.Application;
 
 public static class ApplicationServiceRegistration
 {
-    public static IServiceCollection AddApplicationServices(
-        this IServiceCollection services)
+    public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
         // Register all MediatR handlers in this assembly automatically.
        

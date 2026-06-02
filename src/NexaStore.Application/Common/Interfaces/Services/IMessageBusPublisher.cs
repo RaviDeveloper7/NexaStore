@@ -13,8 +13,5 @@ public interface IMessageBusPublisher
     // message: the serialized payload (already JSON from the OutboxMessage)
     // INTERVIEW: Taking a raw string keeps this interface decoupled from
     // specific message types — the publisher doesn't care what the payload is.
-    Task PublishAsync(
-        string topicName,
-        string message,
-        CancellationToken cancellationToken = default);
+    Task PublishAsync(string topicName,string message,CancellationToken cancellationToken = default);
 }

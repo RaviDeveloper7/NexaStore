@@ -12,19 +12,13 @@ public interface IOutboxRepository
     // Fetch all unprocessed messages — WHERE ProcessedAt IS NULL
     // INTERVIEW: The processor reads these, publishes to Service Bus,
     // then marks them processed. Batch size limits DB load per execution.
-    Task<IReadOnlyList<OutboxMessage>> GetUnprocessedAsync(
-        int batchSize = 50,
-        CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<OutboxMessage>> GetUnprocessedAsync(int batchSize = 50,CancellationToken cancellationToken = default);
 
     // Mark a single message as processed — sets ProcessedAt = UtcNow
     // Called after successful Service Bus publish
-    Task MarkAsProcessedAsync(
-        Guid messageId,
-        CancellationToken cancellationToken = default);
+    Task MarkAsProcessedAsync(Guid messageId,CancellationToken cancellationToken = default);
 
     // Add a new outbox message — called from PlaceOrderCommandHandler
     // within the same EF transaction as the Order save
-    Task AddAsync(
-        OutboxMessage message,
-        CancellationToken cancellationToken = default);
+    Task AddAsync(OutboxMessage message,CancellationToken cancellationToken = default);
 }

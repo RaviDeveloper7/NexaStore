@@ -50,9 +50,7 @@ public class ProcessPaymentCommandHandler
         _currentUserService = currentUserService;
     }
 
-    public async Task<Guid> Handle(
-        ProcessPaymentCommand command,
-        CancellationToken cancellationToken)
+    public async Task<Guid> Handle(ProcessPaymentCommand command,CancellationToken cancellationToken)
     {
         // =====================================================================
         // STEP 1: Load the order

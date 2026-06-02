@@ -5,25 +5,20 @@ using Microsoft.Extensions.Logging;
 using NexaStore.Application.Common.Interfaces.Identity;
 
 namespace NexaStore.Application.Common.Behaviours;
-public class LoggingBehaviour<TRequest, TResponse>
-    : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : notnull
+
+public class LoggingBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : notnull
 {
     private readonly ILogger<LoggingBehaviour<TRequest, TResponse>> _logger;
     private readonly ICurrentUserService _currentUserService;
 
-    public LoggingBehaviour(
-        ILogger<LoggingBehaviour<TRequest, TResponse>> logger,
-        ICurrentUserService currentUserService)
+    public LoggingBehaviour(ILogger<LoggingBehaviour<TRequest, TResponse>> logger, ICurrentUserService currentUserService)
     {
         _logger = logger;
         _currentUserService = currentUserService;
     }
 
-    public async Task<TResponse> Handle(
-        TRequest request,
-        RequestHandlerDelegate<TResponse> next,
-        CancellationToken cancellationToken)
+    public async Task<TResponse> Handle(TRequest request,
+        RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
         // Extract the short class name for readable log messages
         // e.g. "PlaceOrderCommand" not the full namespace

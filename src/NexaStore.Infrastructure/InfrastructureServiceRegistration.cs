@@ -1,16 +1,18 @@
-// InfrastructureServiceRegistration.cs — wires the entire Infrastructure layer.
-// COMPLETE version — covers Cache, Email, and Service Bus (stubs for Day 2).
-// IN: Infrastructure is the only layer that knows about external services:
-// Redis, Azure Service Bus, SMTP/SendGrid.
-// Application layer only knows about IEmailService, ICacheService, IMessageBusPublisher.
-// This file is the composition root for those implementations.
+// InfrastructureServiceRegistration.cs — COMPLETE version.
+// Registers Cache (Redis), Email (SendGrid), and Message Bus (Azure Service Bus).
+// IN: Infrastructure is the composition root for all external service integrations.
+// The Application layer defines the interfaces. This file wires the implementations.
+// Swapping any external service = change this file only.
 
+using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NexaStore.Application.Common.Interfaces.Services;
 using NexaStore.Infrastructure.Cache;
+using NexaStore.Infrastructure.Mail;
+using NexaStore.Infrastructure.MessageBus;
 using StackExchange.Redis;
 
 namespace NexaStore.Infrastructure;
@@ -22,24 +24,12 @@ public static class InfrastructureServiceRegistration
         IConfiguration configuration)
     {
         // =====================================================================
-        // CACHE — Redis
+        // CACHE — Redis (from Day 1 — unchanged)
         // =====================================================================
 
-        // Bind CacheSettings via Options Pattern
         services.Configure<CacheSettings>(
             configuration.GetSection(CacheSettings.SectionName));
 
-        // IN: IConnectionMultiplexer registered as SINGLETON — critical.
-        // The connection multiplexer manages a pool of connections to Redis.
-        // Creating it per-request (Scoped or Transient) would open a new TCP
-        // connection to Redis on every HTTP request — catastrophic at scale.
-        // One multiplexer for the application lifetime = one connection pool
-        // shared across all requests. This is the StackExchange.Redis design intention.
-        //
-        // IN: Why not AddStackExchangeRedisCache() (the MS extension)?
-        // It registers IDistributedCache — a byte array abstraction that doesn't
-        // support pattern-based key deletion. Our RemoveByPrefixAsync needs
-        // the SCAN command via IServer — only available from IConnectionMultiplexer directly.
         services.AddSingleton<IConnectionMultiplexer>(serviceProvider =>
         {
             var settings = serviceProvider
@@ -51,64 +41,116 @@ public static class InfrastructureServiceRegistration
                     "Redis ConnectionString is not configured. " +
                     "Set 'Redis:ConnectionString' in appsettings.json or User Secrets.");
 
-            var configOptions = ConfigurationOptions.Parse(
-                settings.ConnectionString);
+            var configOptions = ConfigurationOptions
+                .Parse(settings.ConnectionString);
 
-            // IN: abortConnect = false — if Redis is unavailable on startup,
-            // the app still starts. The first cache operation will fail gracefully
-            // (caught in RedisCacheService, logged as warning, treated as cache miss).
-            // Without this: app crashes on startup if Redis is unreachable — unacceptable
-            // for a system where cache is an optimisation, not a hard dependency.
             configOptions.AbortOnConnectFail = false;
-
-            // IN: connectRetry = 3 — retry connection 3 times before giving up.
-            // Handles transient network issues during startup (Azure network flaps etc.)
             configOptions.ConnectRetry = 3;
-
-            // IN: ReconnectRetryPolicy handles reconnection after connection loss.
-            // LinearRetry retries every 1 second — balances recovery speed with
-            // not hammering a Redis instance that may be under load.
             configOptions.ReconnectRetryPolicy =
                 new LinearRetry((int)TimeSpan.FromSeconds(1).TotalMilliseconds);
 
             var logger = serviceProvider
                 .GetRequiredService<ILogger<IConnectionMultiplexer>>();
-
             var multiplexer = ConnectionMultiplexer.Connect(configOptions);
 
-            // Log connection events — visible in Application Insights
             multiplexer.ConnectionFailed += (_, e) =>
-                logger.LogError("Redis connection FAILED: {EndPoint} — {FailureType}",
+                logger.LogError(
+                    "Redis connection FAILED: {EndPoint} — {FailureType}",
                     e.EndPoint, e.FailureType);
 
             multiplexer.ConnectionRestored += (_, e) =>
-                logger.LogInformation("Redis connection RESTORED: {EndPoint}",
-                    e.EndPoint);
+                logger.LogInformation(
+                    "Redis connection RESTORED: {EndPoint}", e.EndPoint);
 
             multiplexer.ErrorMessage += (_, e) =>
-                logger.LogWarning("Redis error from {EndPoint}: {Message}",
-                    e.EndPoint, e.Message);
+                logger.LogWarning(
+                    "Redis error from {EndPoint}: {Message}", e.EndPoint, e.Message);
 
             return multiplexer;
         });
 
-        // IN: RedisCacheService is Scoped — not Singleton.
-        // IDatabase (obtained from IConnectionMultiplexer in the constructor)
-        // is lightweight and safe to use from a Scoped service.
-        // Making RedisCacheService Singleton would work too but Scoped is
-        // consistent with the other services it collaborates with (repositories).
         services.AddScoped<ICacheService, RedisCacheService>();
 
         // =====================================================================
-        // EMAIL + SERVICE BUS — registered in Week 5 Day 2
+        // EMAIL — SendGrid
         // =====================================================================
 
-        // Placeholder comments — implementations added next session:
-        // services.Configure<EmailSettings>(configuration.GetSection(EmailSettings.SectionName));
-        // services.AddScoped<IEmailService, EmailService>();
+        // Bind EmailSettings via Options Pattern
+        services.Configure<EmailSettings>(
+            configuration.GetSection(EmailSettings.SectionName));
 
-        // services.Configure<ServiceBusSettings>(configuration.GetSection(ServiceBusSettings.SectionName));
-        // services.AddSingleton<IMessageBusPublisher, AzureServiceBusPublisher>();
+        // IN: EmailService is Scoped — one instance per request/function invocation.
+        // It creates a new SendGridClient per send operation (cheap — stateless HTTP client).
+        // In production, inject IHttpClientFactory and use a named HttpClient
+        // for SendGrid to benefit from connection pooling.
+        // For a portfolio project, direct SendGridClient instantiation is acceptable.
+        services.AddScoped<IEmailService, EmailService>();
+
+        // =====================================================================
+        // MESSAGE BUS — Azure Service Bus
+        // =====================================================================
+
+        // Bind ServiceBusSettings via Options Pattern
+        services.Configure<ServiceBusSettings>(
+            configuration.GetSection(ServiceBusSettings.SectionName));
+
+        // IN: ServiceBusClient registered as Singleton — manages the underlying
+        // AMQP connection pool. Creating per-request would open/close TCP connections
+        // on every publish — prohibitively expensive at scale.
+        // Same rationale as IConnectionMultiplexer for Redis.
+        //
+        // IN: ServiceBusClientOptions.TransportType = AmqpWebSockets.
+        // Standard AMQP uses port 5671. Many corporate firewalls block non-standard ports.
+        // WebSockets transport uses port 443 (HTTPS) — always open.
+        // Use WebSockets for maximum compatibility, especially in Azure App Service.
+        services.AddSingleton(serviceProvider =>
+        {
+            var settings = serviceProvider
+                .GetRequiredService<IOptions<ServiceBusSettings>>()
+                .Value;
+
+            if (string.IsNullOrWhiteSpace(settings.ConnectionString))
+            {
+                // IN: Return a client with an empty connection string.
+                // AzureServiceBusPublisher guards against empty connection string
+                // and logs a warning without throwing. App starts cleanly in local dev.
+                return new ServiceBusClient(
+                    string.Empty,
+                    new ServiceBusClientOptions
+                    {
+                        TransportType = ServiceBusTransportType.AmqpWebSockets
+                    });
+            }
+
+            return new ServiceBusClient(
+                settings.ConnectionString,
+                new ServiceBusClientOptions
+                {
+                    TransportType = ServiceBusTransportType.AmqpWebSockets,
+
+                    // IN: RetryOptions — how the SDK retries transient errors automatically.
+                    // MaxRetries = 3: try 3 times before giving up and throwing.
+                    // Delay = 1s: initial delay between retries (exponential by default).
+                    // MaxDelay = 10s: cap the retry delay at 10 seconds.
+                    // Mode = Exponential: 1s → 2s → 4s (capped at 10s).
+                    // These retries happen INSIDE the SDK before our code sees the exception.
+                    // Our catch block in AzureServiceBusPublisher handles what's left.
+                    RetryOptions = new ServiceBusRetryOptions
+                    {
+                        MaxRetries = 3,
+                        Delay = TimeSpan.FromSeconds(1),
+                        MaxDelay = TimeSpan.FromSeconds(10),
+                        Mode = ServiceBusRetryMode.Exponential
+                    }
+                });
+        });
+
+        // IN: AzureServiceBusPublisher registered as Singleton to match ServiceBusClient.
+        // It holds a dictionary of ServiceBusSenders — one per topic.
+        // Senders are created lazily and cached. Singleton lifetime ensures
+        // the sender cache persists for the app lifetime — maximum connection reuse.
+        // IAsyncDisposable ensures proper cleanup on shutdown.
+        services.AddSingleton<IMessageBusPublisher, AzureServiceBusPublisher>();
 
         return services;
     }
