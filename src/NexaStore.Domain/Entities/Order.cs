@@ -53,6 +53,10 @@ public class Order : BaseEntity
     // Factory method for adding items — keeps the aggregate in control
     public void AddItem(OrderItem item)
     {
+        // Prevent duplicates
+        if (Items.Any(i => i.ProductId == item.ProductId))
+            throw new Exception($"Product with ID {item.ProductId} is already in the order.");
+
         Items.Add(item);
 
         // Recalculate total every time an item is added

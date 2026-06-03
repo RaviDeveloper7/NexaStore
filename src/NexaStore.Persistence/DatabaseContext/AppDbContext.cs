@@ -1,5 +1,5 @@
 // AppDbContext.cs — the single EF Core DbContext for the entire application.
-// INTERVIEW: We use ONE DbContext for all domain entities. Identity gets its
+// IN: We use ONE DbContext for all domain entities. Identity gets its
 // own separate IdentityDbContext (in the Identity layer) to keep concerns separated.
 // AppDbContext knows nothing about ASP.NET Core Identity users.
 //
@@ -19,7 +19,7 @@ public class AppDbContext : DbContext
 {
     private readonly IMediator _mediator;
 
-    // INTERVIEW: IMediator is injected here so domain events raised on
+    // IN: IMediator is injected here so domain events raised on
     // aggregates (Order.AddDomainEvent) can be dispatched in-process after
     // SaveChangesAsync. The Outbox also handles async cross-boundary delivery,
     // but in-process dispatch gives immediate local side effects if needed.
@@ -30,7 +30,7 @@ public class AppDbContext : DbContext
     }
 
     // --- DbSets — one per domain entity ---
-    // INTERVIEW: DbSet<T> is the EF gateway to the underlying table.
+    // IN: DbSet<T> is the EF gateway to the underlying table.
     // Naming convention: plural of the entity name.
     public DbSet<Product> Products { get; set; }
     public DbSet<Category> Categories { get; set; }
@@ -43,14 +43,14 @@ public class AppDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        // INTERVIEW: ApplyConfigurationsFromAssembly scans this assembly for
+        // IN: ApplyConfigurationsFromAssembly scans this assembly for
         // all classes implementing IEntityTypeConfiguration<T> and applies them.
         // This is cleaner than manually calling modelBuilder.ApplyConfiguration(new XConfig())
         // for every entity — adding a new config file is all you need.
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
     }
 
-    // INTERVIEW: Overriding SaveChangesAsync is the standard pattern for
+    // IN: Overriding SaveChangesAsync is the standard pattern for
     // cross-cutting concerns like audit timestamps and domain event dispatch.
     // This fires for EVERY save in the system — no handler needs to set these manually.
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -63,7 +63,7 @@ public class AppDbContext : DbContext
             {
                 case EntityState.Added:
                     // Set both Id and CreatedAt if not already set
-                    // INTERVIEW: Guid.NewGuid() here as a safety net —
+                    // IN: Guid.NewGuid() here as a safety net —
                     // handlers should set Id themselves, but this prevents null IDs
                     // if they forget.
                     if (entry.Entity.Id == Guid.Empty)
@@ -83,7 +83,7 @@ public class AppDbContext : DbContext
         var result = await base.SaveChangesAsync(cancellationToken);
 
         // --- Dispatch domain events AFTER successful save ---
-        // INTERVIEW: Events must fire AFTER save, not before.
+        // IN: Events must fire AFTER save, not before.
         // If we dispatched before save and the DB write failed, we'd have
         // published events for something that never happened — a consistency nightmare.
         await DispatchDomainEventsAsync(cancellationToken);
@@ -110,7 +110,7 @@ public class AppDbContext : DbContext
         entitiesWithEvents.ForEach(e => e.ClearDomainEvents());
 
         // Dispatch each event via MediatR — in-process handlers receive these
-        // INTERVIEW: These are in-process domain events. The Outbox handles
+        // IN: These are in-process domain events. The Outbox handles
         // the cross-process/async delivery to Azure Service Bus separately.
         foreach (var domainEvent in domainEvents)
         {

@@ -59,9 +59,7 @@ public class PlaceOrderCommandHandler : IRequestHandler<PlaceOrderCommand, Guid>
         _currentUserService = currentUserService;
     }
 
-    public async Task<Guid> Handle(
-        PlaceOrderCommand command,
-        CancellationToken cancellationToken)
+    public async Task<Guid> Handle(PlaceOrderCommand command, CancellationToken cancellationToken)
     {
         // =====================================================================
         // STEP 1: Extract and validate the authenticated user

@@ -5,6 +5,22 @@
       "samplingSettings": {
         "isEnabled": true,
         "excludedTypes": "Request"
+      },
+      "enableLiveTelemetry": false
+    },
+    "logLevel": {
+      "default": "Information",
+      "NexaStore.Functions": "Information",
+      "Microsoft": "Warning",
+      "Azure": "Warning"
+    }
+  },
+  "extensions": {
+    "serviceBus": {
+      "prefetchCount": 0,
+      "messageHandlerOptions": {
+        "autoComplete": true,
+        "maxConcurrentCalls": 1
       }
     }
   }
