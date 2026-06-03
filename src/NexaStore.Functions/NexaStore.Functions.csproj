@@ -40,5 +40,6 @@
     <ProjectReference Include="..\NexaStore.Application\NexaStore.Application.csproj" />
     <ProjectReference Include="..\NexaStore.Persistence\NexaStore.Persistence.csproj" />
     <ProjectReference Include="..\NexaStore.Infrastructure\NexaStore.Infrastructure.csproj" />
+    <ProjectReference Include="..\NexaStore.Identity\NexaStore.Identity.csproj" />
   </ItemGroup>
 </Project>
