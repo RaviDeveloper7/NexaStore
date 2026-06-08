@@ -89,13 +89,13 @@ public class PlaceOrderCommandHandler : IRequestHandler<PlaceOrderCommand, Guid>
 
         var productIds = command.Items.Select(i => i.ProductId).ToList();
 
-        // IN: GetByIdsAsync fetches ALL products in one SELECT ... WHERE Id IN (...)
-        // The alternative — foreach item → GetByIdAsync — is an N+1 query.
+        // IN: GetByIdsTrackedAsync fetches ALL products in one SELECT ... WHERE Id IN (...)
+        // The alternative — foreach item → GetByIdsTrackedAsync — is an N+1 query.
         // For an order with 10 items, N+1 fires 10 SELECTs.
         // Batch fetch fires 1 SELECT with an IN clause.
         // At scale (thousands of concurrent orders) N+1 here is a DB killer.
         var products = await _productRepository
-            .GetByIdsAsync(productIds, cancellationToken);
+            .GetByIdsTrackedAsync(productIds, cancellationToken);
 
         // =====================================================================
         // STEP 3: Validate all products exist

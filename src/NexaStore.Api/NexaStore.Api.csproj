@@ -9,6 +9,9 @@
     <RootNamespace>NexaStore.Api</RootNamespace>
     <!-- Enable UserSecrets for local dev — connection strings never in source control -->
     <UserSecretsId>nexastore-api-secrets</UserSecretsId>
+      
+    <!-- Generates XML doc file for Swagger /// summary comments -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

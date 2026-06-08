@@ -74,6 +74,7 @@ public class ProcessPaymentCommandHandler
                 order.CustomerId != callerGuid)
                 throw new UnauthorizedAccessException(
                     "You do not have permission to process payment for this order.");
+
         }
 
         // =====================================================================

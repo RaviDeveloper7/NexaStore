@@ -14,7 +14,7 @@ public class NexaStoreIdentityDbContextFactory
             new DbContextOptionsBuilder<NexaStoreIdentityDbContext>();
 
         optionsBuilder.UseSqlServer(
-            "Server=localhost;Database=NexaStoreDb;Trusted_Connection=True;TrustServerCertificate=True;");
+            "Server=.;Database=NexaStoreDb;Trusted_Connection=True;TrustServerCertificate=True;");
 
         return new NexaStoreIdentityDbContext(optionsBuilder.Options);
     }

@@ -45,10 +45,8 @@ public class OutboxProcessorFunction
     // RunOnStartup = false — do not run immediately when the function app starts.
     // Starting immediately risks processing messages before the DB is fully ready.
     [Function(nameof(OutboxProcessorFunction))]
-    public async Task Run(
-        [TimerTrigger("*/10 * * * * *", RunOnStartup = false)]
-        TimerInfo timerInfo,
-        CancellationToken cancellationToken)
+    public async Task Run([TimerTrigger("*/10 * * * * *", RunOnStartup = false)]
+        TimerInfo timerInfo,CancellationToken cancellationToken)
     {
         _logger.LogInformation(
             "OutboxProcessorFunction triggered at {UtcNow}. " +

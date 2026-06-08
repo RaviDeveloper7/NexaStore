@@ -1,5 +1,5 @@
 // PaymentConfiguration.cs — Fluent API config for Payment.
-// INTERVIEW: Payment has a 1:1 relationship with Order in the current design.
+// IN: Payment has a 1:1 relationship with Order in the current design.
 // The FK is on Payment (OrderId), not on Order — Order has no PaymentId.
 // This means you can query payments independently without loading orders.
 
@@ -54,7 +54,7 @@ public class PaymentConfiguration : IEntityTypeConfiguration<Payment>
             "[Amount] > 0"));
 
         // --- Indexes ---
-        // INTERVIEW: Unique index on OrderId — each order has at most one payment record.
+        // IN: Unique index on OrderId — each order has at most one payment record.
         // If you need multiple payment attempts, remove IsUnique and add an attempt counter.
         builder.HasIndex(p => p.OrderId)
             .IsUnique()

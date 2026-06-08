@@ -102,10 +102,9 @@ public class ProductRepository : GenericRepository<Product>, IProductRepository
     }
 
     public async Task<IReadOnlyList<Product>> GetByIdsAsync(
-        IEnumerable<Guid> ids,
-        CancellationToken cancellationToken = default)
+        IEnumerable<Guid> ids, CancellationToken cancellationToken = default)
     {
-        // INTERVIEW: One DB round-trip for all product IDs in the order.
+        // IN: One DB round-trip for all product IDs in the order.
         // The alternative — loop and call GetByIdAsync per product — is an N+1 query.
         // For an order with 10 items, N+1 fires 10 SELECTs vs this fires 1.
         // EF translates .Contains() on a collection to SQL IN (...).
@@ -113,6 +112,20 @@ public class ProductRepository : GenericRepository<Product>, IProductRepository
 
         return await _dbSet
             .AsNoTracking()
+            .Where(p => idList.Contains(p.Id))
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<Product>> GetByIdsTrackedAsync(
+        IEnumerable<Guid> ids, CancellationToken cancellationToken = default)
+    {
+        // IN: No AsNoTracking — EF tracks these entities so StockQuantity
+        // changes are detected and included in SaveChangesAsync.
+        // Only called by PlaceOrderCommandHandler — the one place in the
+        // system that modifies stock during a write operation.
+        var idList = ids.ToList();
+
+        return await _dbSet
             .Where(p => idList.Contains(p.Id))
             .ToListAsync(cancellationToken);
     }

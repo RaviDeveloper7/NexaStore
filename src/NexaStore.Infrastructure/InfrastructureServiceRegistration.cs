@@ -105,44 +105,23 @@ public static class InfrastructureServiceRegistration
         // Use WebSockets for maximum compatibility, especially in Azure App Service.
         services.AddSingleton(serviceProvider =>
         {
-            var settings = serviceProvider
-                .GetRequiredService<IOptions<ServiceBusSettings>>()
-                .Value;
+            var settings = serviceProvider.GetRequiredService<IOptions<ServiceBusSettings>>().Value;
 
             if (string.IsNullOrWhiteSpace(settings.ConnectionString))
             {
-                // IN: Return a client with an empty connection string.
-                // AzureServiceBusPublisher guards against empty connection string
-                // and logs a warning without throwing. App starts cleanly in local dev.
-                return new ServiceBusClient(
-                    string.Empty,
-                    new ServiceBusClientOptions
-                    {
-                        TransportType = ServiceBusTransportType.AmqpWebSockets
-                    });
+                // For local development without Azure Service Bus, you could return a mock or in-memory implementation here.
+                //return new ServiceBusClient(string.Empty, new ServiceBusClientOptions
+                //{
+                //    TransportType = ServiceBusTransportType.AmqpWebSockets
+                //});
+
+                throw new InvalidOperationException("Service Bus Connection String is missing from configuration.");
             }
 
-            return new ServiceBusClient(
-                settings.ConnectionString,
-                new ServiceBusClientOptions
-                {
-                    TransportType = ServiceBusTransportType.AmqpWebSockets,
-
-                    // IN: RetryOptions — how the SDK retries transient errors automatically.
-                    // MaxRetries = 3: try 3 times before giving up and throwing.
-                    // Delay = 1s: initial delay between retries (exponential by default).
-                    // MaxDelay = 10s: cap the retry delay at 10 seconds.
-                    // Mode = Exponential: 1s → 2s → 4s (capped at 10s).
-                    // These retries happen INSIDE the SDK before our code sees the exception.
-                    // Our catch block in AzureServiceBusPublisher handles what's left.
-                    RetryOptions = new ServiceBusRetryOptions
-                    {
-                        MaxRetries = 3,
-                        Delay = TimeSpan.FromSeconds(1),
-                        MaxDelay = TimeSpan.FromSeconds(10),
-                        Mode = ServiceBusRetryMode.Exponential
-                    }
-                });
+            return new ServiceBusClient(settings.ConnectionString, new ServiceBusClientOptions
+            {
+                TransportType = ServiceBusTransportType.AmqpWebSockets
+            });
         });
 
         // IN: AzureServiceBusPublisher registered as Singleton to match ServiceBusClient.

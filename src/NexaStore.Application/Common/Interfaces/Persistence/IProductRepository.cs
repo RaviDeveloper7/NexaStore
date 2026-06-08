@@ -32,4 +32,7 @@ public interface IProductRepository : IGenericRepository<Product>
     Task<Product?> GetByIdWithCategoryAsync(
         Guid id,
         CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<Product>> GetByIdsTrackedAsync(
+       IEnumerable<Guid> ids, CancellationToken cancellationToken = default);
 }

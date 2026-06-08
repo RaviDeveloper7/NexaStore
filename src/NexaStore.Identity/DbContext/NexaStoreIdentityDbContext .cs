@@ -23,8 +23,7 @@ using NexaStore.Identity.Models;
 
 namespace NexaStore.Identity.DbContext;
 
-public class NexaStoreIdentityDbContext
-    : IdentityDbContext<ApplicationUser>
+public class NexaStoreIdentityDbContext : IdentityDbContext<ApplicationUser>
 {
     // INTERVIEW: IdentityDbContext<ApplicationUser> automatically creates
     // these tables via migration:

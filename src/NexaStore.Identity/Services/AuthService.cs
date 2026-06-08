@@ -73,7 +73,7 @@ public class AuthService : IAuthService
         // Build the ApplicationUser
         var user = new ApplicationUser
         {
-            // INTERVIEW: UserName = Email is the standard ASP.NET Core Identity
+            // IN: UserName = Email is the standard ASP.NET Core Identity
             // convention for email-based authentication. Identity uses UserName
             // internally for login — setting it to Email means users log in
             // with their email address, which is the universal UX expectation.
@@ -83,7 +83,7 @@ public class AuthService : IAuthService
             LastName = request.LastName,
             IsActive = true,
 
-            // INTERVIEW: EmailConfirmed = true skips the email verification step.
+            // IN: EmailConfirmed = true skips the email verification step.
             // For a portfolio project this is fine. In production:
             // EmailConfirmed = false, send a verification email via IEmailService,
             // user clicks the link which calls ConfirmEmailAsync().
@@ -92,7 +92,7 @@ public class AuthService : IAuthService
         };
 
         // CreateAsync hashes the password (PBKDF2 + salt) and inserts the user.
-        // INTERVIEW: Never hash passwords yourself — always use UserManager.
+        // IN: Never hash passwords yourself — always use UserManager.
         // PBKDF2 with 100,000 iterations + random salt is what Identity uses.
         // It is intentionally slow to resist brute-force attacks.
         var result = await _userManager.CreateAsync(user, request.Password);
@@ -107,7 +107,7 @@ public class AuthService : IAuthService
         }
 
         // Assign the Customer role — every registered user is a Customer by default.
-        // INTERVIEW: AddToRoleAsync inserts a row into AspNetUserRoles.
+        // IN: AddToRoleAsync inserts a row into AspNetUserRoles.
         // The role name must match exactly what was seeded in UserRoleConfiguration.
         // This is why we use the constant Roles.Customer — not a magic string.
         var roleResult = await _userManager.AddToRoleAsync(user, Roles.Customer);
@@ -115,7 +115,7 @@ public class AuthService : IAuthService
         {
             // Role assignment failure should not leave a user without a role.
             // Roll back by deleting the user — atomic-ish cleanup.
-            // INTERVIEW: In production this would be wrapped in a transaction
+            // IN: In production this would be wrapped in a transaction
             // using IDbContextTransaction to ensure user + role are atomic.
             await _userManager.DeleteAsync(user);
             throw new InvalidOperationException(
@@ -186,7 +186,7 @@ public class AuthService : IAuthService
         RefreshTokenCommand request,
         CancellationToken cancellationToken = default)
     {
-        // INTERVIEW: The refresh flow has three jobs:
+        // IN: The refresh flow has three jobs:
         // 1. Prove the caller owns a valid (but possibly expired) JWT
         // 2. Prove the caller holds the matching refresh token for that user
         // 3. Issue a new JWT + new refresh token, invalidate the old refresh token
@@ -200,13 +200,13 @@ public class AuthService : IAuthService
         // Together: attacker needs both — significantly harder to exploit.
 
         // --- Step 1: Extract claims from the EXPIRED JWT ---
-        // INTERVIEW: We validate the JWT structure and signature but NOT the expiry.
+        // IN: We validate the JWT structure and signature but NOT the expiry.
         // An expired token is still cryptographically valid — we just won't accept
         // it for API requests. Here we deliberately want to read an expired token.
         var principal = GetPrincipalFromExpiredToken(request.AccessToken);
 
         // Extract the user ID from the sub claim
-        // INTERVIEW: We read sub (not uid or email) because sub is the OIDC standard
+        // IN: We read sub (not uid or email) because sub is the OIDC standard
         // claim for subject identity — guaranteed to be the user's unique ID.
         var userId = principal.FindFirstValue(JwtRegisteredClaimNames.Sub)
             ?? principal.FindFirstValue("uid");
@@ -216,7 +216,7 @@ public class AuthService : IAuthService
                 "Invalid access token — cannot extract user identity.");
 
         // --- Step 2: Load the user from DB ---
-        // INTERVIEW: This is the ONLY DB call in the refresh flow.
+        // IN: This is the ONLY DB call in the refresh flow.
         // We use the ID from the JWT to find the user, then validate their
         // stored refresh token. This keeps the operation fast — one SELECT.
         var user = await _userManager.FindByIdAsync(userId)

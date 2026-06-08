@@ -83,7 +83,7 @@ public class OrderPlacedConsumerFunction
         [ServiceBusTrigger(
             "order-placed",
             "order-notifications",
-            Connection = "ServiceBus:ConnectionString")]
+            Connection = "ServiceBusConnection")]
         string            messageBody,
         FunctionContext context,
         CancellationToken cancellationToken)
