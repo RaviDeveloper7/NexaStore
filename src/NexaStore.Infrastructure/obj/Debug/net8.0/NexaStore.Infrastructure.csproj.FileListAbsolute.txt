@@ -3,7 +3,9 @@ C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Infrastructure\bin\Debug\net8.0\
 C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Infrastructure\bin\Debug\net8.0\NexaStore.Infrastructure.pdb
 C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Infrastructure\bin\Debug\net8.0\NexaStore.Application.dll
 C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Infrastructure\bin\Debug\net8.0\NexaStore.Domain.dll
+C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Infrastructure\bin\Debug\net8.0\NexaStore.Identity.dll
 C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Infrastructure\bin\Debug\net8.0\NexaStore.Application.pdb
+C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Infrastructure\bin\Debug\net8.0\NexaStore.Identity.pdb
 C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Infrastructure\bin\Debug\net8.0\NexaStore.Domain.pdb
 C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Infrastructure\obj\Debug\net8.0\NexaStore.Infrastructure.csproj.AssemblyReference.cache
 C:\Users\RAVI\Documents\NexaStore\src\NexaStore.Infrastructure\obj\Debug\net8.0\NexaStore.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig

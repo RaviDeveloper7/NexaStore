@@ -1,5 +1,5 @@
 // ICurrentUserService.cs — exposes the authenticated user's context to handlers.
-// INTERVIEW: Handlers should never touch HttpContext directly — that's an
+// IN: Handlers should never touch HttpContext directly — that's an
 // infrastructure concern. ICurrentUserService abstracts the claims extraction
 // so handlers stay testable. In unit tests, mock this to return any user you need.
 
@@ -12,7 +12,7 @@ public interface ICurrentUserService
     string? UserId { get; }
 
     // The user's role — "Admin" or "Customer"
-    // INTERVIEW: Used in handlers like GetOrdersQueryHandler to decide
+    // IN: Used in handlers like GetOrdersQueryHandler to decide
     // whether to return all orders or just this customer's orders.
     string? Role { get; }
 

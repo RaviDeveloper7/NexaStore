@@ -425,6 +425,9 @@
             "projectReferences": {
               "C:\\Users\\RAVI\\Documents\\NexaStore\\src\\NexaStore.Application\\NexaStore.Application.csproj": {
                 "projectPath": "C:\\Users\\RAVI\\Documents\\NexaStore\\src\\NexaStore.Application\\NexaStore.Application.csproj"
+              },
+              "C:\\Users\\RAVI\\Documents\\NexaStore\\src\\NexaStore.Identity\\NexaStore.Identity.csproj": {
+                "projectPath": "C:\\Users\\RAVI\\Documents\\NexaStore\\src\\NexaStore.Identity\\NexaStore.Identity.csproj"
               }
             }
           }
@@ -450,17 +453,33 @@
               "target": "Package",
               "version": "[7.17.4, )"
             },
+            "Microsoft.AspNet.Identity.Core": {
+              "target": "Package",
+              "version": "[2.2.4, )"
+            },
             "Microsoft.Extensions.Configuration.Abstractions": {
               "target": "Package",
               "version": "[8.0.0, )"
             },
             "Microsoft.Extensions.DependencyInjection.Abstractions": {
               "target": "Package",
-              "version": "[8.0.1, )"
+              "version": "[8.0.2, )"
+            },
+            "Microsoft.Extensions.Hosting.Abstractions": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
+            "Microsoft.Extensions.Logging.Abstractions": {
+              "target": "Package",
+              "version": "[8.0.3, )"
             },
             "Microsoft.Extensions.Options.ConfigurationExtensions": {
               "target": "Package",
               "version": "[8.0.0, )"
+            },
+            "Microsoft.Identity.Client": {
+              "target": "Package",
+              "version": "[4.84.2, )"
             },
             "SendGrid": {
               "target": "Package",

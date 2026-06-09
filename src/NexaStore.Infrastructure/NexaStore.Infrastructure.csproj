@@ -9,17 +9,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNet.Identity.Core" Version="2.2.4" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.3" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
       
     <!-- Azure Service Bus SDK -->
     <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.17.4" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.84.2" />
     <PackageReference Include="SendGrid" Version="9.29.3" />
 
     <!-- StackExchange.Redis — Azure Cache for Redis client -->
     <PackageReference Include="StackExchange.Redis" Version="2.7.33" />
       
     <!-- Microsoft.Extensions for Options pattern + DI -->
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.7.1" />
 
@@ -29,5 +33,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NexaStore.Application\NexaStore.Application.csproj" />
+    <ProjectReference Include="..\NexaStore.Identity\NexaStore.Identity.csproj" />
   </ItemGroup>
 </Project>

@@ -12,6 +12,9 @@
     <!-- OutputType must be Exe for isolated worker model -->
     <OutputType>Exe</OutputType>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="OrderPlacedConsumerFunction.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <!-- Azure Functions isolated worker SDK -->
