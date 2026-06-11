@@ -20,11 +20,10 @@ namespace NexaStore.Infrastructure;
 public static class InfrastructureServiceRegistration
 {
     public static IServiceCollection AddInfrastructureServices(
-        this IServiceCollection services,
-        IConfiguration configuration)
+        this IServiceCollection services, IConfiguration configuration)
     {
         // =====================================================================
-        // CACHE — Redis (from Day 1 — unchanged)
+        // CACHE — Redis
         // =====================================================================
 
         services.Configure<CacheSettings>(
@@ -107,21 +106,24 @@ public static class InfrastructureServiceRegistration
         {
             var settings = serviceProvider.GetRequiredService<IOptions<ServiceBusSettings>>().Value;
 
-            if (string.IsNullOrWhiteSpace(settings.ConnectionString))
-            {
-                // For local development without Azure Service Bus, you could return a mock or in-memory implementation here.
-                //return new ServiceBusClient(string.Empty, new ServiceBusClientOptions
-                //{
-                //    TransportType = ServiceBusTransportType.AmqpWebSockets
-                //});
+            // C#
+            var raw = settings.ConnectionString?.Trim() ?? string.Empty;
+            var cs = raw.TrimStart('\\', '/'); // remove accidental leading slashes
 
-                throw new InvalidOperationException("Service Bus Connection String is missing from configuration.");
+            if (string.IsNullOrWhiteSpace(cs))
+                throw new InvalidOperationException("Service Bus ConnectionString is missing from configuration.");
+
+            try
+            {
+                return new ServiceBusClient(cs, new ServiceBusClientOptions
+                {
+                    TransportType = ServiceBusTransportType.AmqpWebSockets
+                });
             }
-
-            return new ServiceBusClient(settings.ConnectionString, new ServiceBusClientOptions
+            catch (ArgumentException ex)
             {
-                TransportType = ServiceBusTransportType.AmqpWebSockets
-            });
+                throw new InvalidOperationException("Invalid Service Bus connection string in configuration. Verify the value (no leading slashes).", ex);
+            }
         });
 
         // IN: AzureServiceBusPublisher registered as Singleton to match ServiceBusClient.
@@ -130,6 +132,8 @@ public static class InfrastructureServiceRegistration
         // the sender cache persists for the app lifetime — maximum connection reuse.
         // IAsyncDisposable ensures proper cleanup on shutdown.
         services.AddSingleton<IMessageBusPublisher, AzureServiceBusPublisher>();
+
+        services.AddHostedService<OrderPlacedConsumerService>();
 
         return services;
     }

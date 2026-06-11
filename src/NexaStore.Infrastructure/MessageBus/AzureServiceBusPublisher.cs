@@ -37,8 +37,7 @@ public class AzureServiceBusPublisher : IMessageBusPublisher, IAsyncDisposable
     private readonly SemaphoreSlim _senderLock = new(1, 1);
 
     public AzureServiceBusPublisher(
-        ServiceBusClient client,
-        IOptions<ServiceBusSettings> settings,
+        ServiceBusClient client,IOptions<ServiceBusSettings> settings,
         ILogger<AzureServiceBusPublisher> logger)
     {
         _client = client;
@@ -46,10 +45,7 @@ public class AzureServiceBusPublisher : IMessageBusPublisher, IAsyncDisposable
         _logger = logger;
     }
 
-    public async Task PublishAsync(
-        string topicName,
-        string message,
-        CancellationToken cancellationToken = default)
+    public async Task PublishAsync(string topicName,string message,CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(_settings.ConnectionString))
         {

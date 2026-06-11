@@ -1,5 +1,5 @@
 // AuthService.cs — implements Register, Login, and JWT generation.
-// INTERVIEW: This is the most commonly discussed service in .NET interviews.
+// IN: This is the most commonly discussed service in .NET interviews.
 // Be ready to explain every decision:
 // - Why UserManager over direct DbContext
 // - Why SymmetricSecurityKey over asymmetric (RSA)
@@ -30,7 +30,7 @@ public class AuthService : IAuthService
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly JwtSettings _jwtSettings;
 
-    // INTERVIEW: Why UserManager and not DbContext directly?
+    // IN: Why UserManager and not DbContext directly?
     // UserManager encapsulates all Identity business logic:
     // - Password hashing (PBKDF2 by default — never store plain text)
     // - Email uniqueness enforcement
@@ -39,7 +39,7 @@ public class AuthService : IAuthService
     // Going directly to DbContext bypasses all of this — a security risk.
     // UserManager is the correct abstraction for user operations.
     //
-    // INTERVIEW: Why IOptions<JwtSettings> over IConfiguration?
+    // IN: Why IOptions<JwtSettings> over IConfiguration?
     // IOptions<T> gives you a strongly-typed, validated settings object.
     // IConfiguration["JwtSettings:Key"] is a magic string — typos are
     // silent null references at runtime. IOptions<T> fails fast at startup
@@ -61,7 +61,7 @@ public class AuthService : IAuthService
         CancellationToken cancellationToken = default)
     {
         // Check if email is already registered
-        // INTERVIEW: UserManager.FindByEmailAsync hits AspNetUsers.
+        // IN: UserManager.FindByEmailAsync hits AspNetUsers.
         // We check here for a clean error message. Identity would also reject
         // it in CreateAsync, but with a generic "DuplicateEmail" error code
         // that we'd have to parse. This gives a clearer exception message.
@@ -279,7 +279,7 @@ public class AuthService : IAuthService
 
     private ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
     {
-        // INTERVIEW: TokenValidationParameters here deliberately sets
+        // IN: TokenValidationParameters here deliberately sets
         // ValidateLifetime = false — this is the ONLY place we do that.
         // We WANT to read an expired token. Every other token validation
         // in the system uses ValidateLifetime = true.
@@ -301,7 +301,7 @@ public class AuthService : IAuthService
             ValidateAudience = true,
             ValidAudience = _jwtSettings.Audience,
 
-            // INTERVIEW: The critical flag — we accept expired tokens here.
+            // IN: The critical flag — we accept expired tokens here.
             // Without this, ValidateToken throws on any expired token, making
             // the refresh flow impossible.
             ValidateLifetime = false,
@@ -327,13 +327,13 @@ public class AuthService : IAuthService
         catch (Exception ex)
         {
             // Catches: malformed tokens, invalid signatures, wrong issuer/audience
-            // INTERVIEW: Never expose the raw exception message to the client —
+            // IN: Never expose the raw exception message to the client —
             // it can reveal implementation details useful to an attacker.
             throw new UnauthorizedAccessException(
                 "Invalid access token.", ex);
         }
 
-        // INTERVIEW: Verify the token used the expected algorithm.
+        // IN: Verify the token used the expected algorithm.
         // Algorithm confusion attacks: an attacker sends a token signed with
         // algorithm "none" or a weaker algorithm. Without this check, a lenient
         // library might accept it. Explicit algorithm check is a defence-in-depth measure.
@@ -355,7 +355,7 @@ public class AuthService : IAuthService
 
     // Generates JWT + refresh token and persists the refresh token to the user.
     // Called by both Register and Login — single source of truth for token generation.
-    // INTERVIEW: Private helper keeps Register and Login DRY.
+    // IN: Private helper keeps Register and Login DRY.
     // Both operations end with the same result — a valid token pair.
     private async Task<AuthResponseDto> GenerateAuthResponseAsync(
         ApplicationUser user)
@@ -364,7 +364,7 @@ public class AuthService : IAuthService
         var refreshToken = GenerateRefreshToken();
 
         // Persist the refresh token to the user record
-        // INTERVIEW: Storing the refresh token on the user means only ONE
+        // IN: Storing the refresh token on the user means only ONE
         // active refresh token per user (single device).
         // Multi-device support: separate RefreshToken table with
         // UserId FK, DeviceId, Token, ExpiryTime.

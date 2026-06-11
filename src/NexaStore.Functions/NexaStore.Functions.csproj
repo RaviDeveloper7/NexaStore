@@ -25,6 +25,7 @@
 
     <!-- Application Insights for Functions -->
     <PackageReference Include="Microsoft.Azure.Functions.Worker.ApplicationInsights" Version="1.2.0" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.3.0" />
     <PackageReference Include="System.Text.Json" Version="8.0.6" />
   </ItemGroup>
 

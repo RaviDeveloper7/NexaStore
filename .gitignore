@@ -44,3 +44,9 @@ Thumbs.db
 /src/NexaStore.Functions/bin
 /src/NexaStore.Application/bin
 /src/NexaStore.Domain/obj
+src/NexaStore.Functions/local.settings.json
+src/NexaStore.Api/appsettings.json
+src/NexaStore.Api/appsettings.Development.json
+src/NexaStore.Api/appsettings.json
+src/NexaStore.Api/appsettings.Development.json
+src/NexaStore.Api/appsettings.json
