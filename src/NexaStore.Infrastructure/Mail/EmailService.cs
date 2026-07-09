@@ -1,17 +1,3 @@
-// EmailService.cs — implements IEmailService using SendGrid.
-// IN: IEmailService is defined in Application.Common.Interfaces.Services.
-// This is the only class in the solution that knows SendGrid exists.
-// The Azure Function (OrderPlacedConsumerFunction) calls IEmailService —
-// it has zero knowledge of the underlying provider.
-//
-// IN: Why not use SmtpClient (.NET built-in)?
-// SmtpClient is marked obsolete in .NET 5+ for async use cases.
-// It has known issues with connection pooling and async patterns.
-// SendGrid's SDK is purpose-built for transactional email at scale:
-// open/click tracking, bounce handling, unsubscribe management.
-// For a portfolio project, the key point is the abstraction —
-// the provider choice is secondary to the interface design.
-
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NexaStore.Application.Common.Interfaces.Services;
@@ -33,18 +19,12 @@ public class EmailService : IEmailService
         _logger = logger;
     }
 
-    // =========================================================================
-    // ORDER CONFIRMATION
-    // =========================================================================
-
     public async Task SendOrderConfirmationAsync(string toEmail, string customerName,
         Guid orderId, decimal totalAmount, CancellationToken cancellationToken = default)
     {
         var subject = $"Order Confirmed — #{orderId.ToString()[..8].ToUpper()}";
 
-        // IN: HTML email body — inline styles only.
-        // External CSS is stripped by most email clients (Gmail, Outlook).
-        // Always use inline styles for HTML emails in production.
+        // IN: Use inline styles for email HTML; external CSS is stripped by most clients.
         var htmlContent = BuildOrderConfirmationHtml(
             customerName, orderId, totalAmount);
 

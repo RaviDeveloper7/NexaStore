@@ -1,14 +1,3 @@
-// AppDbContext.cs — the single EF Core DbContext for the entire application.
-// IN: We use ONE DbContext for all domain entities. Identity gets its
-// own separate IdentityDbContext (in the Identity layer) to keep concerns separated.
-// AppDbContext knows nothing about ASP.NET Core Identity users.
-//
-// Key responsibilities:
-// 1. Exposes DbSets for every entity
-// 2. Applies all Fluent API configurations from the Configurations folder
-// 3. Intercepts SaveChangesAsync to auto-set CreatedAt / UpdatedAt on BaseEntity
-// 4. Dispatches domain events AFTER saving — events must not fire on a failed save
-
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using NexaStore.Domain.Entities;
@@ -19,19 +8,13 @@ public class AppDbContext : DbContext
 {
     private readonly IMediator _mediator;
 
-    // IN: IMediator is injected here so domain events raised on
-    // aggregates (Order.AddDomainEvent) can be dispatched in-process after
-    // SaveChangesAsync. The Outbox also handles async cross-boundary delivery,
-    // but in-process dispatch gives immediate local side effects if needed.
+    // IN: IMediator enables in-process domain event dispatch after SaveChanges.
     public AppDbContext(DbContextOptions<AppDbContext> options, IMediator mediator)
         : base(options)
     {
         _mediator = mediator;
     }
 
-    // --- DbSets — one per domain entity ---
-    // IN: DbSet<T> is the EF gateway to the underlying table.
-    // Naming convention: plural of the entity name.
     public DbSet<Product> Products { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<Order> Orders { get; set; }
@@ -43,49 +26,34 @@ public class AppDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        // IN: ApplyConfigurationsFromAssembly scans this assembly for
-        // all classes implementing IEntityTypeConfiguration<T> and applies them.
-        // This is cleaner than manually calling modelBuilder.ApplyConfiguration(new XConfig())
-        // for every entity — adding a new config file is all you need.
+        // IN: ApplyConfigurationsFromAssembly scans for IEntityTypeConfiguration implementations.
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
     }
 
-    // IN: Overriding SaveChangesAsync is the standard pattern for
-    // cross-cutting concerns like audit timestamps and domain event dispatch.
-    // This fires for EVERY save in the system — no handler needs to set these manually.
+    // IN: Override SaveChangesAsync for audit timestamps and domain event dispatch.
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        // --- Audit timestamp interception ---
-        // Walk every tracked entity that is BaseEntity and has been Added or Modified
+        // Auto-set CreatedAt / UpdatedAt for all BaseEntity entries
         foreach (var entry in ChangeTracker.Entries<BaseEntity>())
         {
             switch (entry.State)
             {
                 case EntityState.Added:
-                    // Set both Id and CreatedAt if not already set
-                    // IN: Guid.NewGuid() here as a safety net —
-                    // handlers should set Id themselves, but this prevents null IDs
-                    // if they forget.
                     if (entry.Entity.Id == Guid.Empty)
                         entry.Entity.Id = Guid.NewGuid();
-
                     entry.Entity.CreatedAt = DateTime.UtcNow;
                     break;
 
                 case EntityState.Modified:
-                    // Only set UpdatedAt on modification — never overwrite CreatedAt
                     entry.Entity.UpdatedAt = DateTime.UtcNow;
                     break;
             }
         }
 
-        // --- Persist everything to the database first ---
+        // Persist to database first
         var result = await base.SaveChangesAsync(cancellationToken);
 
-        // --- Dispatch domain events AFTER successful save ---
-        // IN: Events must fire AFTER save, not before.
-        // If we dispatched before save and the DB write failed, we'd have
-        // published events for something that never happened — a consistency nightmare.
+        // IN: Dispatch events only after successful save to maintain consistency.
         await DispatchDomainEventsAsync(cancellationToken);
 
         return result;

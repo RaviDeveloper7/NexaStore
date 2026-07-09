@@ -1,4 +1,3 @@
-// LoggingBehaviour.cs — logs every MediatR request with timing and user context.
 using System.Diagnostics;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -20,19 +19,14 @@ public class LoggingBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest,
     public async Task<TResponse> Handle(TRequest request,
         RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        // Extract the short class name for readable log messages
-        // e.g. "PlaceOrderCommand" not the full namespace
         var requestName = typeof(TRequest).Name;
         var userId = _currentUserService.UserId ?? "Anonymous";
 
-        // --- PRE-HANDLER LOG ---
         _logger.LogInformation(
             "NexaStore Request: {RequestName} | UserId: {UserId} | Request: {@Request}",
             requestName,
             userId,
             request);
-
-        // Start a high-resolution timer — Stopwatch is more accurate than DateTime.UtcNow diff
 
         var stopwatch = Stopwatch.StartNew();
 
@@ -40,7 +34,6 @@ public class LoggingBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest,
 
         try
         {
-            // next() calls the next behaviour in the pipeline, eventually reaching the handler
             response = await next();
         }
         finally
@@ -49,7 +42,6 @@ public class LoggingBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest,
 
             var elapsed = stopwatch.ElapsedMilliseconds;
 
-            // --- POST-HANDLER LOG ---
             if (elapsed > 500)
             {
                 _logger.LogWarning(

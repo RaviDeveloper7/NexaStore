@@ -1,13 +1,3 @@
-// AuthService.cs — implements Register, Login, and JWT generation.
-// IN: This is the most commonly discussed service in .NET interviews.
-// Be ready to explain every decision:
-// - Why UserManager over direct DbContext
-// - Why SymmetricSecurityKey over asymmetric (RSA)
-// - What claims go in the JWT and why
-// - Why refresh tokens exist
-// - Why we use ClockSkew = Zero
-// - What happens if the JWT secret leaks
-
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -30,20 +20,6 @@ public class AuthService : IAuthService
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly JwtSettings _jwtSettings;
 
-    // IN: Why UserManager and not DbContext directly?
-    // UserManager encapsulates all Identity business logic:
-    // - Password hashing (PBKDF2 by default — never store plain text)
-    // - Email uniqueness enforcement
-    // - Lockout tracking
-    // - Role assignment
-    // Going directly to DbContext bypasses all of this — a security risk.
-    // UserManager is the correct abstraction for user operations.
-    //
-    // IN: Why IOptions<JwtSettings> over IConfiguration?
-    // IOptions<T> gives you a strongly-typed, validated settings object.
-    // IConfiguration["JwtSettings:Key"] is a magic string — typos are
-    // silent null references at runtime. IOptions<T> fails fast at startup
-    // if configuration is missing or malformed.
     public AuthService(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
@@ -54,47 +30,28 @@ public class AuthService : IAuthService
         _jwtSettings = jwtSettings.Value;
     }
 
-    // -------------------------------------------------------------------------
-    // REGISTER
-    // -------------------------------------------------------------------------
     public async Task<AuthResponseDto> RegisterAsync(RegisterCommand request,
         CancellationToken cancellationToken = default)
     {
-        // Check if email is already registered
-        // IN: UserManager.FindByEmailAsync hits AspNetUsers.
-        // We check here for a clean error message. Identity would also reject
-        // it in CreateAsync, but with a generic "DuplicateEmail" error code
-        // that we'd have to parse. This gives a clearer exception message.
         var existingUser = await _userManager.FindByEmailAsync(request.Email);
         if (existingUser is not null)
             throw new InvalidOperationException(
                 $"An account with email '{request.Email}' already exists.");
 
-        // Build the ApplicationUser
+        // Build ApplicationUser
         var user = new ApplicationUser
         {
-            // IN: UserName = Email is the standard ASP.NET Core Identity
-            // convention for email-based authentication. Identity uses UserName
-            // internally for login — setting it to Email means users log in
-            // with their email address, which is the universal UX expectation.
+            // IN: UserName = Email is standard Identity convention for email-based auth.
             UserName = request.Email,
             Email = request.Email,
             FirstName = request.FirstName,
             LastName = request.LastName,
             IsActive = true,
-
-            // IN: EmailConfirmed = true skips the email verification step.
-            // For a portfolio project this is fine. In production:
-            // EmailConfirmed = false, send a verification email via IEmailService,
-            // user clicks the link which calls ConfirmEmailAsync().
-            // Login would then check EmailConfirmed before issuing a token.
+            // IN: EmailConfirmed = true skips verification (acceptable for portfolio).
             EmailConfirmed = true
         };
 
-        // CreateAsync hashes the password (PBKDF2 + salt) and inserts the user.
-        // IN: Never hash passwords yourself — always use UserManager.
-        // PBKDF2 with 100,000 iterations + random salt is what Identity uses.
-        // It is intentionally slow to resist brute-force attacks.
+        // IN: UserManager.CreateAsync hashes password (PBKDF2 + salt); never hash manually.
         var result = await _userManager.CreateAsync(user, request.Password);
 
         if (!result.Succeeded)

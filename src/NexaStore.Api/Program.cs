@@ -1,9 +1,3 @@
-// Program.cs — the API composition root. Every layer meets here.
-// IN: Program.cs has one job: wire all services together and configure the pipeline.
-// No business logic lives here. Service registration is delegated to each layer's
-// own extension method (AddApplicationServices, AddPersistenceServices etc.)
-// This keeps Program.cs readable regardless of how complex the individual layers are.
-
 using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
 using Microsoft.Extensions.Options;
@@ -17,52 +11,24 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// =========================================================================
-// SERVICE REGISTRATION
-// =========================================================================
-
-// Application layer — MediatR, FluentValidation, Mapster, pipeline behaviours
+// Wire all services from each layer
 builder.Services.AddApplicationServices();
-
-// Persistence layer — EF Core, repositories, Unit of Work
 builder.Services.AddPersistenceServices(builder.Configuration);
-
-// Infrastructure layer — Redis, SendGrid, Azure Service Bus
 builder.Services.AddInfrastructureServices(builder.Configuration);
-
-// Identity layer — ASP.NET Core Identity, JWT authentication, AuthService
 builder.Services.AddIdentityServices(builder.Configuration);
 
-// Application Insights — structured telemetry, request tracking, dependency tracking
-// IN: One line replaces Serilog + Seq + a custom sink. AppInsights captures all
-// ILogger calls, HTTP requests, SQL queries, Redis calls, HTTP client calls.
-// Zero extra code in handlers or middleware — all captured automatically.
+// IN: AppInsights captures all ILogger calls, requests, queries, and dependencies automatically.
 builder.Services.AddApplicationInsightsTelemetry();
 
 // Controllers
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-// =========================================================================
-// API VERSIONING
-// =========================================================================
-
-// IN: URL segment versioning (/api/v1/products) is the most explicit
-// and widely understood approach. Alternatives:
-// - Query string (?api-version=1.0) — less visible, easy to forget
-// - Header (api-version: 1.0) — clean URLs but hidden from docs
-// URL versioning is self-documenting — the version is visible in every request.
+// IN: URL segment versioning (/api/v1/resources) is self-documenting.
 builder.Services.AddApiVersioning(options =>
 {
-    // Return API version info in response headers:
-    // api-supported-versions: 1.0
-    // api-deprecated-versions: (when applicable)
     options.ReportApiVersions = true;
-
-    // IN: AssumeDefaultVersionWhenUnspecified = true means requests to
-    // /api/products (no version) are treated as /api/v1/products.
-    // Useful during transition — existing clients without version in the URL
-    // still work after versioning is added.
+    // IN: AssumeDefaultVersionWhenUnspecified allows /api/resources to default to v1.
     options.AssumeDefaultVersionWhenUnspecified = true;
     options.DefaultApiVersion = new ApiVersion(1, 0);
 
@@ -121,15 +87,7 @@ builder.Services.AddSwaggerGen(options =>
         options.IncludeXmlComments(xmlPath);
 });
 
-// =========================================================================
-// HEALTH CHECKS
-// =========================================================================
-
-// IN: Health checks expose /health endpoint for Azure App Service health probes,
-// load balancer health checks, and uptime monitoring.
-// Each check verifies connectivity to a critical dependency.
-// If SQL Server is unreachable, the health check returns Unhealthy
-// and the load balancer can route traffic away from this instance.
+// IN: Health checks expose /health for load balancers and uptime monitoring.
 builder.Services.AddHealthChecks()
     .AddSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")!,
@@ -145,21 +103,7 @@ builder.Services.AddHealthChecks()
         name: "service-bus",
         tags: new[] { "messaging", "servicebus" });
 
-// =========================================================================
-// BUILD
-// =========================================================================
-
 var app = builder.Build();
-
-// =========================================================================
-// MIDDLEWARE PIPELINE — ORDER MATTERS
-// =========================================================================
-
-// IN: ExceptionMiddleware must be FIRST — it wraps the entire pipeline.
-// If any middleware below it throws, ExceptionMiddleware catches it and
-// returns a clean JSON error response. Without it being first, exceptions
-// from authentication middleware or routing would produce HTML error pages.
-app.UseMiddleware<ExceptionMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
@@ -182,28 +126,14 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// IN: Authentication before Authorization — always.
-// UseAuthentication: reads the JWT, validates it, populates HttpContext.User.
-// UseAuthorization: reads HttpContext.User, checks [Authorize] attributes.
-// Reversing the order means [Authorize] checks an unauthenticated User — always fails.
+// IN: Authentication before Authorization — UseAuthentication reads JWT, UseAuthorization checks [Authorize].
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
-// IN: /health returns JSON with individual check statuses.
-// Azure App Service uses this URL for health probes — configure in Portal.
 app.MapHealthChecks("/health");
-
 app.Run();
 
-// =========================================================================
-// SWAGGER OPTIONS HELPER
-// =========================================================================
-
-// IN: IConfigureOptions<SwaggerGenOptions> is the correct pattern for
-// configuring Swagger with API versioning — generates one Swagger document
-// per API version automatically.
 public class ConfigureSwaggerOptions : IConfigureOptions<SwaggerGenOptions>
 {
     private readonly IApiVersionDescriptionProvider _provider;

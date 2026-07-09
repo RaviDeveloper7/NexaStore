@@ -1,19 +1,3 @@
-// OutboxProcessorFunction.cs — the delivery engine of the Outbox Pattern.
-// IN: This function closes the loop on guaranteed event delivery:
-//
-// PlaceOrderCommandHandler saves Order + OutboxMessage atomically (DB transaction).
-// THIS function reads those OutboxMessages and publishes them to Service Bus.
-// If Service Bus is unavailable, this function retries on the next timer tick.
-// At-least-once delivery is guaranteed — messages are never permanently lost.
-//
-// IN: TimerTrigger every 10 seconds.
-// 10 seconds is the balance between:
-// - Latency: customer waits up to 10s for their confirmation email trigger
-// - Load: 6 DB queries per minute on OutboxMessages table
-// In production, tune based on volume and SLA requirements.
-// High-volume systems: reduce to 5s or use a Service Bus trigger on a
-// "trigger" queue that PlaceOrderCommandHandler writes to for immediate processing.
-
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using NexaStore.Application.Common.Interfaces.Services;
@@ -26,9 +10,6 @@ public class OutboxProcessorFunction
     private readonly IMessageBusPublisher _messageBusPublisher;
     private readonly ILogger<OutboxProcessorFunction> _logger;
 
-    // IN: All dependencies injected via constructor — same DI pattern as handlers.
-    // The Functions isolated worker fully supports constructor injection.
-    // No [Inject] attributes or service locator pattern needed.
     public OutboxProcessorFunction(
         IOutboxRepository outboxRepository,
         IMessageBusPublisher messageBusPublisher,
@@ -39,11 +20,6 @@ public class OutboxProcessorFunction
         _logger = logger;
     }
 
-    // IN: TimerTrigger cron expression "*/10 * * * * *" = every 10 seconds.
-    // Cron format for Azure Functions: {second} {minute} {hour} {day} {month} {weekday}
-    // Standard cron is 5 fields (no seconds). Azure Functions adds the seconds field.
-    // RunOnStartup = false — do not run immediately when the function app starts.
-    // Starting immediately risks processing messages before the DB is fully ready.
     [Function(nameof(OutboxProcessorFunction))]
     public async Task Run([TimerTrigger("*/10 * * * * *", RunOnStartup = true)]
         TimerInfo timerInfo,CancellationToken cancellationToken)
@@ -54,9 +30,6 @@ public class OutboxProcessorFunction
             DateTime.UtcNow,
             timerInfo.IsPastDue);
 
-        // IN: IsPastDue = true means the timer fired late (e.g. function app
-        // was scaled down or sleeping). Log it but process normally —
-        // unprocessed OutboxMessages have been waiting, process them now.
         if (timerInfo.IsPastDue)
         {
             _logger.LogWarning(
@@ -64,15 +37,7 @@ public class OutboxProcessorFunction
                 "Unprocessed messages may have been waiting longer than expected.");
         }
 
-        // =====================================================================
-        // STEP 1: Fetch unprocessed messages (batch of 50)
-        // =====================================================================
-
-        // IN: GetUnprocessedAsync fetches WHERE ProcessedAt IS NULL ORDER BY CreatedAt ASC.
-        // Ordered by CreatedAt ensures chronological processing —
-        // OrderPlacedEvent before OrderCancelledEvent for the same order.
-        // Batch of 50 caps processing time per execution.
-        // If > 50 messages are pending, the next timer tick processes the next batch.
+        // Fetch unprocessed messages (batch of 50)
         IReadOnlyList<Domain.Entities.OutboxMessage> messages;
 
         try
@@ -82,8 +47,6 @@ public class OutboxProcessorFunction
         }
         catch (Exception ex)
         {
-            // DB failure — log and exit. Do not crash the function.
-            // Next timer tick will retry.
             _logger.LogError(ex,
                 "Failed to fetch unprocessed OutboxMessages from database. " +
                 "Will retry on next timer execution.");

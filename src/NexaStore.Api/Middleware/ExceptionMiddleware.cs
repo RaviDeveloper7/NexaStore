@@ -1,29 +1,3 @@
-
-// IN: Every real production API has this. Without it, unhandled exceptions produce
-// ASP.NET Core's default error page (HTML) or a raw 500 with a stack trace —
-// both are wrong for a JSON API and potentially expose internal implementation details.
-//
-// IN: What is the relationship between ExceptionMiddleware and UnhandledExceptionBehaviour?
-// UnhandledExceptionBehaviour (Application layer):
-//   - Catches exceptions from MediatR handlers specifically
-//   - Logs with rich APPLICATION context (RequestName, UserId, Request object)
-//   - Rethrows — does NOT produce an HTTP response
-//   - Works for both API and Azure Functions
-//
-// ExceptionMiddleware (API layer):
-//   - Catches everything UnhandledExceptionBehaviour rethrew
-//   - Maps exception TYPE to HTTP status code
-//   - Produces a structured JSON error response
-//   - Only runs for HTTP requests
-//
-// Together: Application Insights gets a rich log entry WITH business context.
-// The client gets a clean JSON response WITH no stack trace leakage.
-//
-// IN: We use RFC 7807 Problem Details format — the HTTP API standard for errors.
-// https://datatracker.ietf.org/doc/html/rfc7807
-// ASP.NET Core's built-in validation uses this same format.
-// Consistency means API consumers handle all error responses the same way.
-
 using System.Net;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
@@ -38,9 +12,7 @@ public class ExceptionMiddleware
     private readonly ILogger<ExceptionMiddleware> _logger;
     private readonly IHostEnvironment _environment;
 
-    // IN: IHostEnvironment injected to detect Development vs Production.
-    // In Development: include exception details in the response (useful for debugging).
-    // In Production:  return generic messages only (never leak stack traces or internals).
+    // IN: IHostEnvironment distinguishes Development (include details) from Production (generic).
     public ExceptionMiddleware(
         RequestDelegate next,
         ILogger<ExceptionMiddleware> logger,
